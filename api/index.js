@@ -730,7 +730,8 @@ function serveFile(req, res, pathname) {
 }
 
 /* ---------------- 主入口 ---------------- */
-const PUBLIC_PATHS = new Set(['/login.html', '/register.html', '/favicon.ico']);
+// 未登录也可访问的资源：登录/注册页及其 logo（favicon 也指向 logo.png）
+const PUBLIC_PATHS = new Set(['/login.html', '/register.html', '/favicon.ico', '/logo.png']);
 
 async function handler(req, res) {
   await initDb();
