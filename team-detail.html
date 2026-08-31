@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="logo.png">
+<title>蓝桥杯 Python 组 · 组队详情 · 创智算</title>
+<style>
+  :root{
+    --ink:#1B241C; --forest:#3F5541; --forest-deep:#2C3B2E;
+    --paper:#F2F1E7; --paper-dim:#E9E7D9; --copper:#B9863B; --signal:#6EE7A8;
+    --line:rgba(27,36,28,0.14);
+    --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(242,241,231,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 32px; max-width:1180px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{width:38px; height:38px; border-radius:50%; background:var(--forest-deep); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .brand-mark svg{width:24px; height:24px;}
+  .brand-name{font-weight:700; font-size:15px;}
+  .brand-sub{font-family:var(--mono); font-size:10px; color:var(--forest); letter-spacing:0.08em;}
+  .nav-links{display:flex; gap:36px; font-size:14px; font-weight:500;}
+  .nav-links a{opacity:0.75;} .nav-links a:hover{opacity:1;}
+  .nav-cta{font-family:var(--mono); font-size:12px; background:var(--forest-deep); color:var(--paper); padding:9px 18px; border-radius:100px; display:flex; align-items:center; gap:6px;}
+  .nav-cta::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal);}
+  @media(max-width:860px){.nav-links{display:none;}}
+
+  .breadcrumb{font-family:var(--mono); font-size:12px; color:rgba(27,36,28,0.5); padding:28px 0 0; display:flex; gap:8px; align-items:center;}
+  .breadcrumb a{opacity:0.7;} .breadcrumb a:hover{opacity:1; color:var(--forest);}
+  .breadcrumb .sep{opacity:0.4;} .breadcrumb .current{color:var(--ink); opacity:0.9;}
+
+  .detail-head{padding:28px 0 36px; border-bottom:1px solid var(--line);}
+  .status-pill{font-family:var(--mono); font-size:11px; display:inline-flex; align-items:center; gap:6px; background:rgba(110,231,168,0.14); color:var(--forest-deep); padding:6px 13px; border-radius:100px; margin-bottom:18px;}
+  .status-pill .dot{width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal);}
+  .detail-title{font-size:clamp(24px,3.6vw,36px); font-weight:800; margin-bottom:10px;}
+  .comp-ref{font-size:13.5px; color:rgba(27,36,28,0.55);}
+  .comp-ref a{color:var(--forest); font-weight:600;}
+  .comp-ref a:hover{text-decoration:underline;}
+
+  .detail-body{display:grid; grid-template-columns:1.6fr 1fr; gap:56px; padding:48px 0 96px; align-items:start;}
+  @media(max-width:900px){.detail-body{grid-template-columns:1fr;}}
+
+  .block{margin-bottom:40px;}
+  .block h3{font-size:17px; font-weight:800; margin-bottom:14px; display:flex; align-items:center; gap:8px;}
+  .block h3::before{content:'//'; color:var(--copper); font-family:var(--mono); font-size:14px;}
+  .block p{font-size:14.5px; color:rgba(27,36,28,0.7); max-width:560px;}
+
+  .member-list{display:flex; flex-direction:column; gap:0;}
+  .member-row{display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid var(--line);}
+  .m-avatar{width:38px; height:38px; border-radius:50%; background:var(--forest); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:13px; flex-shrink:0;}
+  .m-name{font-size:14px; font-weight:700;}
+  .m-meta{font-size:12px; color:rgba(27,36,28,0.5);}
+  .m-role{margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--copper); border:1px solid var(--copper); padding:3px 9px; border-radius:100px;}
+
+  .need-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .need-card{border:1px solid var(--line); border-radius:12px; padding:16px; background:#fff;}
+  .need-label{font-family:var(--mono); font-size:10.5px; color:var(--copper); margin-bottom:6px;}
+  .need-val{font-size:14.5px; font-weight:700;}
+  .tag-list{display:flex; gap:6px; flex-wrap:wrap; margin-top:14px;}
+  .tag-list span{font-size:11.5px; background:var(--paper-dim); padding:5px 10px; border-radius:6px; color:var(--forest-deep);}
+
+  /* apply card */
+  .apply-card{border:1px solid var(--line); border-radius:16px; padding:24px; background:#fff; position:sticky; top:96px;}
+  .apply-card h4{font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.06em; margin-bottom:16px;}
+  .leader-row{display:flex; align-items:center; gap:12px; margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--line);}
+  .leader-info .l-name{font-size:14.5px; font-weight:700;}
+  .leader-info .l-meta{font-size:12px; color:rgba(27,36,28,0.5);}
+  label{display:block; font-size:12px; font-weight:600; margin-bottom:6px; margin-top:14px;}
+  label:first-of-type{margin-top:0;}
+  input[type=text], textarea, select{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px;
+    font-family:var(--sans); font-size:13.5px; background:var(--paper); color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:70px;}
+  input:focus, textarea:focus, select:focus{outline:2px solid var(--forest); outline-offset:1px;}
+  .apply-submit{
+    width:100%; margin-top:18px; padding:13px; border-radius:100px; border:none;
+    background:var(--forest-deep); color:var(--paper); font-size:14px; font-weight:700; cursor:pointer;
+    transition:transform .2s;
+  }
+  .apply-submit:hover{transform:translateY(-2px);}
+  .apply-note{font-size:11.5px; color:rgba(27,36,28,0.45); margin-top:12px; text-align:center;}
+  .success-box{
+    display:none; text-align:center; padding:20px 10px;
+  }
+  .success-box .dot{width:10px; height:10px; border-radius:50%; background:var(--signal); box-shadow:0 0 8px var(--signal); margin:0 auto 12px;}
+  .success-box b{display:block; font-size:14px; margin-bottom:6px;}
+  .success-box span{font-size:12.5px; color:rgba(27,36,28,0.55);}
+
+  footer{background:var(--ink); color:var(--paper); padding:56px 0 28px; margin-top:20px;}
+  .foot-bottom{display:flex; justify-content:space-between; font-size:12px; color:rgba(242,241,231,0.4); flex-wrap:wrap; gap:10px;}
+  .foot-bottom span{font-family:var(--mono);}
+  .foot-top{padding-bottom:32px; margin-bottom:24px; border-bottom:1px solid rgba(242,241,231,0.12); font-weight:700;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="brand" href="index.html">
+      <div class="brand-mark"><img src="logo.png" alt="创智算" style="width:100%; height:100%; border-radius:50%; display:block;"></div>
+      <div>
+        <div class="brand-name">"创智算"数字科技协会</div>
+        <div class="brand-sub">CHUANGZHISUAN.CLUB</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#about">关于我们</a>
+      <a href="index.html#fields">前沿领域</a>
+      <a href="index.html#competitions">竞赛中心</a>
+      <a href="index.html#team">组队大厅</a>
+    </div>
+    <span class="auth-slot" id="authSlot"></span>
+    <a class="nav-cta" href="team-post.html">发起组队</a>
+  </nav>
+</header>
+
+<div class="wrap"><div id="teamRoot"></div></div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">"创智算"数字科技协会</div>
+    <div class="foot-bottom">
+      <span>© 2026 CHUANGZHISUAN DIGITAL TECH ASSOCIATION</span>
+      <span>BUILD · V1.0 · PHASE-1</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/auth-ui.js"></script>
+<script src="js/pay-gate.js"></script>
+<script>
+ (function(){
+  const root = document.getElementById('teamRoot');
+  const teamId = Number(new URLSearchParams(location.search).get('id'));
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+
+  function notFound(){
+    return '<div style="text-align:center; padding:90px 20px;"><b style="font-size:18px;">该队伍不存在或已删除</b><p style="color:rgba(27,36,28,0.5); margin-top:8px;"><a href="index.html#team" style="color:var(--forest); font-weight:600;">返回组队大厅 →</a></p></div>';
+  }
+
+  function tags(arr){
+    return (arr || []).filter(Boolean).map(function(s){ return '<span class="tag-list"><span>' + esc(s) + '</span></span>'; }).join('');
+  }
+
+  function render(t, applyCount){
+    document.title = t.title + ' · 组队 · 创智算';
+    const total = (Number(t.have_count) || 0) + (Number(t.need_count) || 0);
+    const full = t.status === 'full' || (total > 0 && (Number(t.have_count) || 0) >= total);
+    const skills = t.skills ? String(t.skills).split(',').filter(Boolean) : [];
+
+    const compRef = t.competition_name
+      ? '<div class="comp-ref">关联竞赛：<a href="competition-detail.html?id=' + encodeURIComponent(t.competition_id) + '">' + esc(t.competition_name) + '</a></div>'
+      : '<div class="comp-ref">关联竞赛：未关联</div>';
+
+    root.innerHTML =
+      '<div class="breadcrumb">' +
+        '<a href="index.html">首页</a><span class="sep">/</span>' +
+        '<a href="index.html#team">组队大厅</a><span class="sep">/</span>' +
+        '<span class="current">' + esc(t.title) + '</span>' +
+      '</div>' +
+
+      '<div class="detail-head">' +
+        '<div class="status-pill"><span class="dot"></span>' + (full ? '已满员' : '招募中 · 缺 ' + (t.need_count || 0) + ' 人') + '</div>' +
+        '<h1 class="detail-title">' + esc(t.title) + '</h1>' +
+        compRef +
+      '</div>' +
+
+      '<div class="detail-body">' +
+        '<div>' +
+          '<div class="block"><h3>队伍介绍</h3><p>' + (t.description ? esc(t.description) : '（队长暂未填写介绍）') + '</p></div>' +
+          '<div class="block"><h3>团队现状</h3><div class="member-list">' +
+            '<div class="member-row"><div class="m-avatar">' + esc((t.creator_name || t.creator_username || '队').slice(0,1)) + '</div><div><div class="m-name">' + esc(t.creator_name || t.creator_username) + '</div><div class="m-meta">队长 · ' + t.created_at.slice(0,10) + '</div></div><span class="m-role">队长</span></div>' +
+          '</div>' +
+          '<p style="font-size:12.5px; color:rgba(27,36,28,0.5); margin-top:6px;">现有 ' + (t.have_count || 0) + ' / ' + total + ' 人</p></div>' +
+          '<div class="block"><h3>招募需求</h3><div class="need-grid">' +
+            '<div class="need-card"><div class="need-label">缺口人数</div><div class="need-val">' + (full ? 0 : (t.need_count || 0)) + ' 人</div></div>' +
+            '<div class="need-card"><div class="need-label">年级要求</div><div class="need-val">' + (t.grade ? esc(t.grade) : '不限') + '</div></div>' +
+          '</div>' +
+          '<div style="margin-top:14px; display:flex; gap:6px; flex-wrap:wrap;">' + skills.map(function(s){ return '<span style="font-size:11.5px; background:var(--paper-dim); padding:5px 10px; border-radius:6px; color:var(--forest-deep);">' + esc(s) + '</span>'; }).join('') + '</div>' +
+          (t.contact ? '<p style="font-size:12.5px; color:rgba(27,36,28,0.55); margin-top:12px;">联系方式：' + esc(t.contact) + '</p>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div id="sideCol"></div>' +
+      '</div>';
+
+    renderSide(t, full, applyCount);
+  }
+
+  function renderSide(t, full, applyCount){
+    const side = document.getElementById('sideCol');
+    // 我是队长？
+    fetch('/api/me', { credentials:'same-origin' }).then(function(r){ return r.ok ? r.json() : { ok:false }; }).then(function(me){
+      const isCreator = me && me.ok && me.username === t.creator_username;
+      const isAdmin = me && me.ok && me.isAdmin;
+      if(isCreator || isAdmin){
+        // 队长管理面板：申请列表 + 撤销公告
+        side.innerHTML = '<div class="apply-card"><h4>队长管理 · 申请人（' + applyCount + ' 待处理）</h4><div id="appList">加载中…</div>' +
+          '<div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--line);">' +
+          '<button class="btn-ghost" id="withdrawBtn" style="width:100%; padding:11px; border-radius:100px; font-size:13px; font-family:inherit; border:1px solid rgba(185,90,60,0.5); color:#9c4a2f; background:transparent; cursor:pointer;">撤销公告（删除该队伍）</button>' +
+          '</div></div>';
+        const wb = side.querySelector('#withdrawBtn');
+        if(wb) wb.addEventListener('click', function(){
+          if(!confirm('确定撤销这条组队公告？该队伍及其所有申请记录将被删除，不可恢复。')) return;
+          fetch('/api/team/delete', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ teamId: t.id }) })
+            .then(function(r){ return r.json(); })
+            .then(function(d){ alert(d && d.msg ? d.msg : '操作完成'); location.href = 'index.html#team'; })
+            .catch(function(){ alert('网络错误'); });
+        });
+        loadApplications(t.id);
+      } else if(full){
+        side.innerHTML = '<div class="apply-card"><h4>申请加入</h4><p style="font-size:13px; color:rgba(27,36,28,0.6);">该队伍已满员，无法继续申请。</p></div>';
+      } else {
+        side.innerHTML =
+          '<div class="apply-card"><h4>申请加入</h4>' +
+          '<div class="leader-row"><div class="m-avatar">' + esc((t.creator_name || t.creator_username || '队').slice(0,1)) + '</div><div class="leader-info"><div class="l-name">' + esc(t.creator_name || t.creator_username) + ' · 队长</div><div class="l-meta">申请后由队长审核</div></div></div>' +
+          '<label>留言</label>' +
+          '<textarea id="applyMsg" placeholder="简单介绍你的基础与想加入的原因"></textarea>' +
+          '<button class="apply-submit" id="applyBtn">提交申请</button>' +
+          '<div class="apply-note">提交后由队长在后台审核</div>' +
+          '<div class="success-box" id="successBox"><div class="dot"></div><b>申请已提交</b><span>等待队长审核，可在组队留言中查看</span></div>' +
+          '</div>';
+        const btn = side.querySelector('#applyBtn');
+        btn.addEventListener('click', function(){
+          btn.disabled = true;
+          fetch('/api/team/apply', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ teamId: t.id, message: side.querySelector('#applyMsg').value }) })
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+              if(d && d.ok){
+                side.querySelector('.leader-row').style.display = 'none';
+                side.querySelector('.apply-submit').style.display = 'none';
+                side.querySelector('.apply-note').style.display = 'none';
+                document.getElementById('successBox').style.display = 'block';
+              } else {
+                btn.disabled = false;
+                alert(d && d.msg ? d.msg : '提交失败');
+              }
+            })
+            .catch(function(){ btn.disabled = false; });
+        });
+      }
+    });
+  }
+
+  function loadApplications(teamId){
+    fetch('/api/team/applications?teamId=' + teamId, { credentials:'same-origin' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        const list = document.getElementById('appList');
+        if(!list) return;
+        const apps = (d && d.applications) || [];
+        if(!apps.length){ list.innerHTML = '<p style="font-size:12.5px; color:rgba(27,36,28,0.5);">暂无申请。</p>'; return; }
+        list.innerHTML = apps.map(function(a){
+          const st = a.status === 'APPROVED' ? '已接受' : (a.status === 'REJECTED' ? '已拒绝' : '待处理');
+          return '<div style="padding:12px 0; border-bottom:1px solid var(--line);">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center;"><b style="font-size:13.5px;">' + esc(a.name || a.username) + '</b><span style="font-size:11px; color:rgba(27,36,28,0.5);">' + st + '</span></div>' +
+            '<div style="font-size:12px; color:rgba(27,36,28,0.55); margin-top:3px;">' + esc(a.college || '—') + (a.student_id ? ' · ' + esc(a.student_id) : '') + '</div>' +
+            (a.message ? '<p style="font-size:12px; color:rgba(27,36,28,0.7); margin-top:4px;">' + esc(a.message) + '</p>' : '') +
+            (a.status === 'pending' ? '<button class="apply-submit" data-app="' + a.id + '" style="margin-top:8px; padding:8px 18px; font-size:12.5px;">接受入队</button>' : '') +
+            '</div>';
+        }).join('');
+        list.querySelectorAll('[data-app]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            fetch('/api/team/accept', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ applicationId: Number(this.getAttribute('data-app')) }) })
+              .then(function(r){ return r.json(); })
+              .then(function(d){ alert(d && d.msg ? d.msg : '操作完成'); location.reload(); });
+          });
+        });
+      })
+      .catch(function(){});
+  }
+
+  if(!teamId){ root.innerHTML = notFound(); return; }
+  fetch('/api/team?id=' + teamId, { credentials:'same-origin' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.ok) render(d.team, d.applyCount);
+      else root.innerHTML = notFound();
+    })
+    .catch(function(){ root.innerHTML = notFound(); });
+ })();
+</script>
+
+</body>
+</html>

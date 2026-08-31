@@ -1,0 +1,19 @@
+{
+  "name": "czsweb",
+  "version": "2.1.0",
+  "private": true,
+  "description": "创智算数字科技协会网站（Neon PostgreSQL + Vercel 部署版）",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "test": "node scripts/test.js",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "@vercel/blob": "^0.23.0"
+  }
+}

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="logo.png">
+<title>"创智算"数字科技协会</title>
+<style>
+  :root{
+    --ink:#1B241C;
+    --forest:#3F5541;
+    --forest-deep:#2C3B2E;
+    --paper:#F2F1E7;
+    --paper-dim:#E9E7D9;
+    --copper:#B9863B;
+    --signal:#6EE7A8;
+    --line:rgba(27,36,28,0.14);
+    --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(242,241,231,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 32px; max-width:1180px; margin:0 auto;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{
+    width:38px; height:38px; border-radius:50%;
+    background:var(--forest-deep);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark svg{width:24px; height:24px;}
+  .brand-name{font-weight:700; font-size:15px; letter-spacing:0.02em;}
+  .brand-sub{font-family:var(--mono); font-size:10px; color:var(--forest); letter-spacing:0.08em;}
+  .nav-links{display:flex; gap:36px; font-size:14px; font-weight:500;}
+  .nav-links a{position:relative; padding:4px 0; color:var(--ink); opacity:0.75; transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-cta{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.03em;
+    background:var(--forest-deep); color:var(--paper);
+    padding:9px 18px; border-radius:100px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .nav-cta::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal);}
+  .menu-btn{display:none; background:none; border:none; font-size:22px; color:var(--ink);}
+  @media(max-width:860px){
+    .nav-links{
+      display:none;
+      position:absolute; top:100%; left:0; right:0;
+      background:var(--paper); border-bottom:1px solid var(--line);
+      flex-direction:column; gap:0; padding:8px 32px 18px;
+    }
+    .nav-links.open{display:flex;}
+    .nav-links a{padding:12px 0; border-bottom:1px solid var(--line);}
+    .nav-links a:last-child{border-bottom:none;}
+    header nav{position:relative;}
+    .menu-btn{display:block;}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; padding:96px 0 80px; overflow:hidden;}
+  .hero-rings{
+    position:absolute; top:50%; left:50%;
+    width:1100px; height:1100px;
+    transform:translate(-50%,-46%);
+    pointer-events:none;
+  }
+  .circuit-base{color:var(--forest); opacity:0.32;}
+  .circuit-glow{
+    color:var(--signal);
+    filter:drop-shadow(0 0 5px var(--signal)) drop-shadow(0 0 10px rgba(110,231,168,0.5));
+  }
+  .ring-line{color:var(--ink); opacity:0.16;}
+  @media(max-width:640px){.hero-rings{opacity:0.7;}}
+  .hero-inner{position:relative; z-index:2; text-align:center;}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; color:var(--forest);
+    letter-spacing:0.12em; display:inline-flex; align-items:center; gap:8px;
+    background:rgba(63,85,65,0.08); padding:6px 14px; border-radius:100px;
+    margin-bottom:28px;
+  }
+  h1{
+    font-size:clamp(34px,6vw,64px); font-weight:800; letter-spacing:-0.01em;
+    line-height:1.15; max-width:760px; margin:0 auto 22px;
+  }
+  h1 .accent{color:var(--forest);}
+  .hero-desc{
+    max-width:520px; margin:0 auto 40px; font-size:16px; color:rgba(27,36,28,0.7);
+  }
+  .hero-cta{display:flex; gap:14px; justify-content:center; margin-bottom:56px; flex-wrap:wrap;}
+  .btn-primary, .btn-ghost{
+    padding:14px 28px; border-radius:100px; font-size:14px; font-weight:600;
+    display:inline-flex; align-items:center; gap:8px; transition:transform .2s, box-shadow .2s;
+  }
+  .btn-primary{background:var(--forest-deep); color:var(--paper);}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(44,59,46,0.25);}
+  .btn-ghost{border:1.5px solid var(--ink); color:var(--ink); background:transparent;}
+  .btn-ghost:hover{transform:translateY(-2px);}
+
+  .field-strip{
+    display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:760px; margin:0 auto;
+  }
+  .field-chip{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.03em;
+    padding:7px 13px; border:1px solid var(--line); border-radius:8px;
+    background:rgba(255,255,255,0.5); color:var(--forest-deep);
+  }
+  .field-chip b{color:var(--copper); margin-right:5px; font-weight:700;}
+
+  /* ---------- section shell ---------- */
+  section{padding:88px 0;}
+  .sec-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:44px; gap:24px; flex-wrap:wrap;}
+  .sec-eyebrow{font-family:var(--mono); font-size:12px; color:var(--copper); letter-spacing:0.1em; margin-bottom:10px; display:block;}
+  .sec-title{font-size:clamp(24px,3.2vw,34px); font-weight:800;}
+  .sec-desc{font-size:14px; color:rgba(27,36,28,0.6); max-width:360px;}
+
+  /* ---------- about ---------- */
+  .about{background:var(--forest-deep); color:var(--paper); border-radius:28px; margin:0 32px;}
+  @media(max-width:640px){.about{margin:0 20px; border-radius:20px;}}
+  .about-inner{max-width:1180px; margin:0 auto; padding:72px 48px;}
+  @media(max-width:640px){.about-inner{padding:52px 24px;}}
+  .about-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:56px; align-items:start;}
+  @media(max-width:860px){.about-grid{grid-template-columns:1fr;}}
+  .about-grid p{color:rgba(242,241,231,0.75); font-size:15px; margin-top:16px; max-width:440px;}
+  .org-list{margin-top:24px; display:flex; flex-direction:column; gap:0;}
+  .org-row{display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(242,241,231,0.12); font-size:13px;}
+  .org-role{font-family:var(--mono); color:var(--signal); font-size:11px;}
+  .org-note{margin-top:12px; font-size:12px; color:rgba(242,241,231,0.5); line-height:1.7;}
+
+  /* ---------- about: 获奖成果 ---------- */
+  .ach-head{display:flex; align-items:baseline; gap:12px; margin-bottom:18px; flex-wrap:wrap;}
+  .ach-head .t{font-size:19px; font-weight:800; color:#F2F1E7;}
+  .ach-head .en{font-family:var(--mono); font-size:11px; color:var(--signal); letter-spacing:0.12em; opacity:0.9;}
+  .ach-sub{font-size:12px; color:rgba(242,241,231,0.5); margin-bottom:14px; line-height:1.7;}
+  .ach-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media(max-width:640px){.ach-grid{grid-template-columns:1fr;}}
+  .ach-item{background:var(--forest-deep); border:1px solid rgba(242,241,231,0.1); border-radius:12px; padding:13px 14px; transition:border-color .15s, background .15s;}
+  .ach-item:hover{border-color:rgba(110,231,168,0.4); background:rgba(110,231,168,0.06);}
+  .ach-lv{font-family:var(--mono); font-size:9.5px; padding:2px 9px; border-radius:100px; letter-spacing:0.04em; display:inline-block;}
+  .ach-lv.g{color:var(--signal); border:1px solid rgba(110,231,168,0.45);}
+  .ach-lv.c{color:var(--copper); border:1px solid rgba(185,134,59,0.55);}
+  .ach-lv.s{color:rgba(242,241,231,0.75); border:1px solid rgba(242,241,231,0.35);}
+  .ach-lv.p{color:#8fd3ff; border:1px solid rgba(143,211,255,0.45);}
+  .ach-item .nm{font-size:12.5px; font-weight:700; color:#F2F1E7; line-height:1.5; margin-top:7px;}
+  .ach-item .mt{font-size:10.5px; color:rgba(242,241,231,0.5); margin-top:5px; line-height:1.5;}
+
+  /* ---------- fields (PCB silkscreen labels) ---------- */
+  .field-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media(max-width:860px){.field-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.field-grid{grid-template-columns:1fr;}}
+  .field-card{
+    display:block;
+    border:1px solid var(--line); border-radius:14px; padding:22px;
+    background:rgba(255,255,255,0.45);
+    position:relative; transition:border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .field-card:hover{
+    border-color:var(--forest); transform:translateY(-3px);
+    box-shadow:0 12px 28px rgba(44,59,46,0.12);
+  }
+  .field-tag{font-family:var(--mono); font-size:10.5px; color:var(--copper); letter-spacing:0.06em; margin-bottom:14px; display:block;}
+  .field-name{font-size:17px; font-weight:700; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .field-name .f-arrow{font-family:var(--mono); font-size:14px; color:var(--forest); opacity:0; transform:translateX(-4px); transition:opacity .2s, transform .2s;}
+  .field-card:hover .f-arrow{opacity:1; transform:translateX(0);}
+  .field-desc{font-size:12.5px; color:rgba(27,36,28,0.55);}
+  .field-card.soon{opacity:0.55;}
+  .field-card.soon::after{
+    content:'规划中'; position:absolute; top:18px; right:18px;
+    font-family:var(--mono); font-size:9px; color:var(--forest); border:1px solid var(--forest); border-radius:100px; padding:2px 8px;
+  }
+
+  /* ---------- competitions ---------- */
+  .filter-panel{
+    border:1px solid var(--line); border-radius:16px; padding:20px 22px 14px;
+    background:rgba(255,255,255,0.45); margin-bottom:18px;
+  }
+  .filter-group + .filter-group{margin-top:16px; padding-top:16px; border-top:1px dashed var(--line);}
+  .filter-group-label{
+    font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.06em;
+    margin-bottom:11px; display:flex; align-items:center; gap:8px;
+  }
+  .filter-group-label .axis{
+    font-size:10px; border:1px solid var(--copper); border-radius:100px; padding:1px 8px; letter-spacing:0.04em;
+  }
+  .filter-group-label .hint{font-size:10.5px; color:rgba(27,36,28,0.42); letter-spacing:0; font-family:var(--sans);}
+  .filter-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .filter-chip{
+    font-size:12.5px; padding:8px 16px; border-radius:100px; border:1px solid var(--line);
+    background:transparent; color:var(--ink); opacity:0.7; cursor:pointer; font-family:var(--sans);
+    transition:opacity .15s, background .15s, border-color .15s;
+  }
+  .filter-chip:hover{opacity:1; border-color:var(--forest);}
+  .filter-chip.active{background:var(--forest-deep); color:var(--paper); border-color:var(--forest-deep); opacity:1;}
+  .filter-bar{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:20px;}
+  .filter-status{font-family:var(--mono); font-size:12px; color:rgba(27,36,28,0.55);}
+  .filter-status b{color:var(--forest);}
+  .filter-reset{
+    font-size:12px; border:none; background:none; color:var(--copper); cursor:pointer;
+    font-family:var(--mono); padding:3px 0; border-bottom:1px dashed transparent; transition:border-color .15s;
+  }
+  .filter-reset:hover{border-bottom-color:var(--copper);}
+  .comp-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  .comp-empty{
+    display:none; text-align:center; padding:56px 20px; border:1px dashed var(--line);
+    border-radius:16px; color:rgba(27,36,28,0.5); font-size:13.5px;
+  }
+  .comp-empty b{display:block; font-size:16px; color:var(--ink); margin-bottom:6px;}
+  .fund-banner{
+    display:flex; align-items:center; gap:12px; margin-bottom:18px; padding:13px 18px;
+    border:1px solid rgba(185,134,59,0.4); border-radius:12px; background:rgba(185,134,59,0.08);
+    font-size:13px; color:var(--ink); transition:border-color .15s, transform .15s;
+  }
+  .fund-banner:hover{border-color:var(--copper); transform:translateY(-1px);}
+  .fund-banner .fb-tag{
+    font-family:var(--mono); font-size:10px; color:var(--paper); background:var(--copper);
+    padding:3px 9px; border-radius:100px; letter-spacing:0.05em; flex-shrink:0;
+  }
+  .comp-fund{
+    font-size:11.5px; color:var(--copper); border-top:1px dashed var(--line);
+    padding-top:10px; margin-top:2px; display:flex; align-items:center; gap:6px;
+    font-family:var(--mono);
+  }
+  .comp-fund b{font-weight:800; font-size:12.5px;}
+  .comp-fund.none{color:rgba(27,36,28,0.45);}
+  .comp-status{font-family:var(--mono); font-size:10px; padding:3px 9px; border-radius:100px; letter-spacing:0.04em; white-space:nowrap;}
+  .comp-status.open{background:rgba(110,231,168,0.2); color:var(--forest-deep); border:1px solid rgba(63,85,65,0.35);}
+  .comp-status.closed{background:rgba(27,36,28,0.06); color:rgba(27,36,28,0.55); border:1px solid rgba(27,36,28,0.2);}
+  .res-banner{border-color:rgba(63,85,65,0.4); background:rgba(63,85,65,0.07);}
+  .res-banner .res-tag{background:var(--forest-deep);}
+  @media(max-width:860px){.comp-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:600px){.comp-grid{grid-template-columns:1fr;}}
+  .comp-card{
+    border:1px solid var(--line); border-radius:16px; padding:22px; background:#fff;
+    display:flex; flex-direction:column; gap:12px;
+    transition:border-color .2s, transform .2s;
+  }
+  .comp-card:hover{border-color:var(--forest); transform:translateY(-3px);}
+  .comp-top{display:flex; justify-content:space-between; align-items:flex-start;}
+  .level-badge{font-family:var(--mono); font-size:10px; padding:4px 9px; border-radius:6px; letter-spacing:0.04em;}
+  .level-a{background:rgba(63,85,65,0.12); color:var(--forest);}
+  .level-b{background:rgba(185,134,59,0.14); color:var(--copper);}
+  .level-c{background:rgba(27,36,28,0.08); color:var(--ink); opacity:0.6;}
+  .level-d{background:rgba(110,231,168,0.16); color:var(--forest-deep); border:1px dashed rgba(63,85,65,0.5);}
+  .comp-title{font-size:15.5px; font-weight:700; line-height:1.4;}
+  .comp-meta{font-size:12px; color:rgba(27,36,28,0.55); display:flex; flex-direction:column; gap:4px;}
+  .comp-meta span{font-family:var(--mono); color:var(--ink); opacity:0.5; margin-right:4px;}
+
+  /* ---------- team recruit ---------- */
+  .team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media(max-width:860px){.team-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:600px){.team-grid{grid-template-columns:1fr;}}
+  .team-card{
+    display:block;
+    border:1px solid var(--line); border-radius:16px; padding:22px; background:#fff;
+    transition:border-color .2s, transform .2s;
+  }
+  .team-card:hover{border-color:var(--forest); transform:translateY(-3px);}
+  .team-status{display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10.5px; margin-bottom:14px;}
+  .dot{width:6px; height:6px; border-radius:50%;}
+  .dot.open{background:var(--signal); box-shadow:0 0 6px var(--signal);}
+  .dot.full{background:rgba(27,36,28,0.3);}
+  .team-title{font-size:15px; font-weight:700; margin-bottom:10px;}
+  .team-tags{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;}
+  .team-tag{font-size:11px; background:var(--paper-dim); padding:4px 9px; border-radius:6px; color:var(--forest-deep);}
+  .team-foot{display:flex; justify-content:space-between; align-items:center; font-size:12px; color:rgba(27,36,28,0.55);}
+  .avatars{display:flex;}
+  .avatar{width:24px; height:24px; border-radius:50%; background:var(--forest); border:2px solid #fff; margin-left:-8px; font-size:9px; color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--mono);}
+  .avatar:first-child{margin-left:0;}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--ink); color:var(--paper); padding:64px 0 28px; margin-top:40px;}
+  .foot-grid{display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:40px; border-bottom:1px solid rgba(242,241,231,0.12);}
+  .foot-brand{max-width:320px;}
+  .foot-brand p{font-size:13px; color:rgba(242,241,231,0.55); margin-top:14px;}
+  .foot-cols{display:flex; gap:64px; flex-wrap:wrap;}
+  .foot-col h4{font-family:var(--mono); font-size:11px; color:var(--signal); letter-spacing:0.08em; margin-bottom:14px;}
+  .foot-col a{display:block; font-size:13px; color:rgba(242,241,231,0.7); margin-bottom:10px;}
+  .foot-bottom{display:flex; justify-content:space-between; padding-top:24px; font-size:12px; color:rgba(242,241,231,0.4); flex-wrap:wrap; gap:10px;}
+  .foot-bottom span{font-family:var(--mono);}
+
+  @media (prefers-reduced-motion: reduce){
+    .signal-path{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="brand">
+      <div class="brand-mark"><img src="logo.png" alt="创智算" style="width:100%; height:100%; border-radius:50%; display:block;"></div>
+      <div>
+        <div class="brand-name">"创智算"数字科技协会</div>
+        <div class="brand-sub">CHUANGZHISUAN.CLUB</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#about">关于我们</a>
+      <a href="#fields">前沿领域</a>
+      <a href="#competitions">竞赛中心</a>
+      <a href="#team">组队大厅</a>
+    </div>
+    <span class="auth-slot" id="authSlot"></span>
+    <a class="nav-cta" href="#about">加入协会</a>
+    <button class="menu-btn">☰</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <svg class="hero-rings" id="heroCircuitSvg" viewBox="0 0 1100 1100" fill="none">
+    <defs>
+      <!-- 分支模板 A：长枝，末端为芯片元件 -->
+      <g id="branchTplA">
+        <path d="M550,550 L550,495"/>
+        <circle cx="550" cy="495" r="4" fill="currentColor" stroke="none"/>
+        <path d="M550,495 L585,460 L585,415"/>
+        <circle cx="585" cy="415" r="4" fill="currentColor" stroke="none"/>
+        <path d="M585,415 L585,382"/>
+        <rect x="574" y="358" width="22" height="22" rx="2"/>
+        <path d="M578,358 L578,348 M590,358 L590,348"/>
+        <path d="M550,495 L515,495 L515,463"/>
+        <circle cx="515" cy="463" r="3.5" fill="currentColor" stroke="none"/>
+      </g>
+      <!-- 分支模板 B：短枝，末端为接插件 -->
+      <g id="branchTplB">
+        <path d="M550,550 L550,510"/>
+        <circle cx="550" cy="510" r="3.5" fill="currentColor" stroke="none"/>
+        <path d="M550,510 L520,480 L520,438"/>
+        <circle cx="520" cy="438" r="3.5" fill="currentColor" stroke="none"/>
+        <path d="M505,438 L535,438 M520,438 L520,421"/>
+        <path d="M550,510 L578,510 L578,533"/>
+        <circle cx="578" cy="533" r="3" fill="currentColor" stroke="none"/>
+      </g>
+      <!-- 完整图案：年轮 + 8 组分支 -->
+      <g id="circuitAll" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+        <circle class="ring-line" cx="550" cy="550" r="95" stroke="currentColor"/>
+        <circle class="ring-line" cx="550" cy="550" r="165" stroke="currentColor" stroke-dasharray="2 11"/>
+        <circle class="ring-line" cx="550" cy="550" r="235" stroke="currentColor"/>
+        <circle class="ring-line" cx="550" cy="550" r="305" stroke="currentColor" stroke-dasharray="1 9"/>
+        <circle class="ring-line" cx="550" cy="550" r="375" stroke="currentColor"/>
+        <circle class="ring-line" cx="550" cy="550" r="440" stroke="currentColor" stroke-dasharray="1 13"/>
+        <use href="#branchTplA" transform="rotate(0 550 550)"/>
+        <use href="#branchTplB" transform="rotate(45 550 550)"/>
+        <use href="#branchTplA" transform="rotate(90 550 550)"/>
+        <use href="#branchTplB" transform="rotate(135 550 550)"/>
+        <use href="#branchTplA" transform="rotate(180 550 550)"/>
+        <use href="#branchTplB" transform="rotate(225 550 550)"/>
+        <use href="#branchTplA" transform="rotate(270 550 550)"/>
+        <use href="#branchTplB" transform="rotate(315 550 550)"/>
+      </g>
+      <radialGradient id="spotGrad" gradientUnits="userSpaceOnUse" cx="550" cy="550" r="230">
+        <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+        <stop offset="60%" stop-color="#fff" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+      </radialGradient>
+      <mask id="spotMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1100" height="1100">
+        <rect x="0" y="0" width="1100" height="1100" fill="url(#spotGrad)"/>
+      </mask>
+    </defs>
+
+    <!-- 底层：常驻的淡电路纹理 -->
+    <use href="#circuitAll" class="circuit-base"/>
+    <!-- 高亮层：随鼠标位置被"点亮" -->
+    <use href="#circuitAll" class="circuit-glow" mask="url(#spotMask)"/>
+
+    <path class="signal-path" d="M550 550 L550 430 M550 430 L470 350 M550 430 L630 350" stroke="#6EE7A8" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="6 10">
+      <animate attributeName="stroke-dashoffset" from="0" to="-160" dur="4s" repeatCount="indefinite"/>
+    </path>
+    <path class="signal-path" d="M550 550 H700 V620 H820" stroke="#B9863B" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="6 10">
+      <animate attributeName="stroke-dashoffset" from="0" to="-160" dur="5s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="550" cy="550" r="10" fill="#2C3B2E" stroke="#6EE7A8" stroke-width="1.5"/>
+  </svg>
+
+  <div class="wrap hero-inner">
+    <div class="eyebrow">创智算 · 数字科技协会</div>
+    <h1>在电路与年轮之间，<span class="accent">共同生长</span></h1>
+    <p class="hero-desc">竞赛信息、组队协作、保研考研，从这里开始生长。</p>
+    <div class="hero-cta">
+      <a class="btn-primary" href="#competitions">进入竞赛库 →</a>
+      <a class="btn-ghost" href="team-post.html">发起组队</a>
+    </div>
+    <div class="field-strip">
+      <span class="field-chip"><b>01</b>创新创业</span>
+      <span class="field-chip"><b>02</b>保研</span>
+      <span class="field-chip"><b>03</b>考研</span>
+      <span class="field-chip"><b>04</b>软件开发</span>
+      <span class="field-chip"><b>05</b>嵌入式开发</span>
+      <span class="field-chip"><b>06</b>物联网开发</span>
+      <span class="field-chip"><b>07</b>机器人开发</span>
+      <span class="field-chip"><b>08</b>具身智能</span>
+      <span class="field-chip"><b>09</b>人工智能 AI</span>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-grid">
+      <div>
+        <span class="sec-eyebrow">// 关于我们</span>
+        <h2 class="sec-title" style="color:#F2F1E7;">协会简介</h2>
+        <p>“创智算”数字科技协会聚焦竞赛培育、升学规划与前沿技术探索，致力于成为校内技术成长的第一站。协会以“技术 + 升学”为主线，为成员提供从入门到获奖的全链路支持。</p>
+        <div class="org-list">
+          <div class="org-row"><span>孙国豪</span><span class="org-role">社长</span></div>
+        </div>
+        <p class="org-note">协会持续吸收有热情、有特长的同学加入核心团队，一同把协会做大。</p>
+      </div>
+      <div>
+        <div class="ach-head">
+          <span class="t">协会历年成就</span>
+          <span class="en">ACHIEVEMENTS</span>
+        </div>
+        <p class="ach-sub">历年均由社团成员共同参与获得（不完全统计，部分摘自协会招新海报与历年获奖证书）。</p>
+        <div class="ach-grid">
+          <div class="ach-item">
+            <span class="ach-lv g">国家级</span>
+            <div class="nm">全国大学生电子设计竞赛（电赛）· 国家一等奖</div>
+            <div class="mt">历届协会核心成员</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv g">国家级</span>
+            <div class="nm">"创祎杯"全国大学生创新创业大赛 · 国家级银奖</div>
+            <div class="mt">2024 · 协会历届核心成员（基于新一代4G物联网边缘计算网关的基站通信电源监测系统）</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv c">省级</span>
+            <div class="nm">蓝桥杯（第十七届）软件赛 C/C++ 程序设计大学B组 · 江苏赛区二等奖</div>
+            <div class="mt">2026 · 协会历届核心成员</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv c">省级</span>
+            <div class="nm">中国机器人及人工智能大赛（第二十八届）· 江苏赛区 机器人任务挑战赛（智慧药房）二等奖</div>
+            <div class="mt">2026 · 协会历届核心成员</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv c">省级</span>
+            <div class="nm">iCAN 大学生创新创业大赛 · 江浙赛区二等奖</div>
+            <div class="mt">2024 · 协会历届核心成员（基于新一代4G物联网网关的基站电力监测系统）</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv c">省级</span>
+            <div class="nm">中国大学生工程实践与创新能力大赛（工创赛）· 省级一等奖</div>
+            <div class="mt">历年 · 协会核心成员</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv s">区域</span>
+            <div class="nm">华为开发者大赛 · 区域一等奖</div>
+            <div class="mt">历年 · 协会核心成员</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv s">区域</span>
+            <div class="nm">全国大学生创新发明大赛（区域赛）· 优胜奖</div>
+            <div class="mt">2024 · 协会历届核心成员（数字金融）</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv p">科研</span>
+            <div class="nm">计算机软件著作权《面向基站电力监测的智能触控网关人机交互系统 V1.0》</div>
+            <div class="mt">2024 · 协会历届核心成员（软著登字第13951763号）</div>
+          </div>
+          <div class="ach-item">
+            <span class="ach-lv p">学术</span>
+            <div class="nm">DSInS 2024 国际会议（数字社会与智能系统）· 参会</div>
+            <div class="mt">2024 · 协会历届核心成员（郑州）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="fields">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-eyebrow">// 前沿领域</span>
+        <h2 class="sec-title">协会覆盖的技术方向</h2>
+      </div>
+      <p class="sec-desc">每个方向对应资料库、竞赛标签与组队分类，长期迭代更新。</p>
+    </div>
+    <div class="field-grid">
+      <a class="field-card" href="fields.html?id=innov"><span class="field-tag">IC · 01</span><div class="field-name">创新创业<span class="f-arrow">→</span></div><div class="field-desc">创业计划书、路演辅导、"互联网+"赛道资源</div></a>
+      <a class="field-card" href="fields.html?id=software"><span class="field-tag">R · 02</span><div class="field-name">软件开发<span class="f-arrow">→</span></div><div class="field-desc">算法竞赛、Web / 后端开发实践</div></a>
+      <a class="field-card" href="fields.html?id=embedded"><span class="field-tag">U · 03</span><div class="field-name">嵌入式开发<span class="f-arrow">→</span></div><div class="field-desc">单片机、驱动开发、硬件调试</div></a>
+      <a class="field-card" href="fields.html?id=iot"><span class="field-tag">M · 04</span><div class="field-name">物联网开发<span class="f-arrow">→</span></div><div class="field-desc">传感网络、边缘计算、智能硬件</div></a>
+      <a class="field-card" href="fields.html?id=robot"><span class="field-tag">Q · 05</span><div class="field-name">机器人开发<span class="f-arrow">→</span></div><div class="field-desc">机械结构、运动控制、RoboCup 方向</div></a>
+      <a class="field-card" href="fields.html?id=embodied"><span class="field-tag">X · 06</span><div class="field-name">具身智能<span class="f-arrow">→</span></div><div class="field-desc">感知-决策-执行一体化前沿探索</div></a>
+      <a class="field-card" href="fields.html?id=ai"><span class="field-tag">A · 07</span><div class="field-name">人工智能 AI<span class="f-arrow">→</span></div><div class="field-desc">机器学习、大模型应用实践</div></a>
+      <a class="field-card soon" href="fields.html?id=baoyan"><span class="field-tag">S · 08</span><div class="field-name">保研<span class="f-arrow">→</span></div><div class="field-desc">夏令营时间线、经验分享、内推信息</div></a>
+      <a class="field-card" href="fields.html?id=kaoyan"><span class="field-tag">S · 09</span><div class="field-name">考研<span class="f-arrow">→</span></div><div class="field-desc">择校择专业、真题资料、考研搭子</div></a>
+    </div>
+    <a class="fund-banner res-banner" href="resources.html" style="margin-top:18px; margin-bottom:0;">
+      <span class="fb-tag res-tag">RESOURCE</span>
+      <span>协会学习资源库已上线：898 条课程网盘资源（大模型 / 编程 / 嵌入式 / 考研公考等），持续更新 → 进入资源库</span>
+    </a>
+  </div>
+</section>
+
+<section id="competitions">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-eyebrow">// 竞赛中心</span>
+        <h2 class="sec-title">正在报名的竞赛</h2>
+      </div>
+      <p class="sec-desc">按「级别」与「技术类型」两个大类筛选：两类可以单独使用，也可以同时叠加，快速定位目标竞赛。</p>
+    </div>
+    <a class="fund-banner" href="funding-list.html">
+      <span class="fb-tag">FUNDING</span>
+      <span>学校 2026 年学科竞赛立项报销名单已公布（75 项），各竞赛详情页同步展示立项金额 → 查看完整名单</span>
+    </a>
+    <div class="filter-panel">
+      <div class="filter-group">
+        <div class="filter-group-label"><span class="axis">分类 01</span>按级别筛选 <span class="hint">（与另一类可叠加生效）</span></div>
+        <div class="filter-row" data-group="level">
+          <button class="filter-chip active" data-value="">不限级别</button>
+          <button class="filter-chip" data-value="national">国家级</button>
+          <button class="filter-chip" data-value="province">省级</button>
+          <button class="filter-chip" data-value="school">校级</button>
+          <button class="filter-chip" data-value="club">社团内部</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-label"><span class="axis">分类 02</span>按技术类型筛选 <span class="hint">（与另一类可叠加生效）</span></div>
+        <div class="filter-row" data-group="tech">
+          <button class="filter-chip active" data-value="">不限类型</button>
+          <button class="filter-chip" data-value="code">软件开发</button>
+          <button class="filter-chip" data-value="embedded">嵌入式</button>
+          <button class="filter-chip" data-value="embodied">具身智能</button>
+        </div>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-status">当前条件：<b id="filterStatus">全部竞赛</b> · 共 <b id="filterCount">0</b> 项</span>
+      <button class="filter-reset" id="filterReset">重置全部条件</button>
+    </div>
+    <div class="comp-grid" id="compGrid"></div>
+    <div class="comp-empty" id="compEmpty">
+      <b>没有匹配的竞赛</b>
+      试试放宽其中一个筛选条件，或点击「重置全部条件」。
+    </div>
+  </div>
+</section>
+
+<section id="team">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-eyebrow">// 组队大厅</span>
+        <h2 class="sec-title">正在招募的队伍</h2>
+      </div>
+      <p class="sec-desc">点击公告查看队长信息与技能要求，申请后由队长审核。</p>
+    </div>
+    <div style="margin-bottom:24px;">
+      <a class="btn-primary" href="team-post.html" style="font-size:13px; padding:11px 22px;">+ 发布组队公告</a>
+    </div>
+    <div class="team-grid" id="teamGrid"></div>
+    <div class="comp-empty" id="teamEmpty" style="border:none; padding:36px 20px;">
+      <b>暂无组队公告</b>
+      点击上方"发布组队公告"，创建你的第一支队伍。
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand-name" style="color:#F2F1E7;">"创智算"数字科技协会</div>
+        <p>竞赛信息 · 组队协作 · 升学规划 · 技术成长，从这里开始。</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h4>MODULES</h4>
+          <a href="#about">关于我们</a>
+          <a href="#competitions">竞赛中心</a>
+          <a href="#team">组队大厅</a>
+        </div>
+        <div class="foot-col">
+          <h4>CONTACT</h4>
+          <a href="#">协会公众号</a>
+          <a href="contact.html">加入交流群</a>
+          <a href="contact.html">意见反馈</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 CHUANGZHISUAN DIGITAL TECH ASSOCIATION</span>
+      <span>BUILD · V1.1 · DATA-DRIVEN</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/auth-ui.js"></script>
+<script src="js/pay-gate.js"></script>
+<script src="js/competitions-data.js"></script>
+<script>
+  // 移动端导航菜单
+  (function(){
+    const menuBtn = document.querySelector('.menu-btn');
+    const navLinks = document.querySelector('.nav-links');
+    if(!menuBtn || !navLinks) return;
+    menuBtn.addEventListener('click', ()=> navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=> navLinks.classList.remove('open')));
+  })();
+
+  // 竞赛中心：从竞赛数据库 + 协会内部竞赛（管理员发布）渲染卡片 + 双大类筛选
+  (function(){
+    const grid = document.getElementById('compGrid');
+    const emptyEl = document.getElementById('compEmpty');
+    const statusEl = document.getElementById('filterStatus');
+    const countEl = document.getElementById('filterCount');
+    const resetBtn = document.getElementById('filterReset');
+    const chips = document.querySelectorAll('.filter-panel .filter-chip');
+    if(!grid || !window.COMPETITIONS) return;
+
+    const state = { level:'', tech:'' };
+    const groupLabels = {
+      level: { national:'国家级', province:'省级', school:'校级', club:'社团内部' },
+      tech:  { code:'软件开发', embedded:'嵌入式', embodied:'具身智能' }
+    };
+    let cards = [];
+
+    function regStatus(deadline){
+      const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(deadline || '');
+      if(!m) return null;
+      const d = new Date(+m[1], +m[2] - 1, +m[3]);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      return today > d ? 'closed' : 'open';
+    }
+    function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+
+    function cardHTML(c){
+      const tech = c.techLabels.length ? c.techLabels.join(' / ') : '不限技术方向';
+      const fund = c.funding.inList
+        ? '<div class="comp-fund"><b>¥' + c.funding.amount.toFixed(1) + '万</b>学校立项报销 · No.' + c.funding.no + '</div>'
+        : '<div class="comp-fund none">' + (c.level === 'club' ? '社团内部 · 管理员发布' : c.level === 'school' ? '校级 · 管理员发布' : '未列入学校立项报销') + '</div>';
+      const st = regStatus(c.deadline);
+      const statusChip = st ? '<span class="comp-status ' + st + '">' + (st === 'open' ? '● 报名中' : '已截止') + '</span>' : '';
+      return '<a class="comp-card" href="competition-detail.html?id=' + encodeURIComponent(c.id) + '"' +
+             ' data-level="' + c.level + '" data-tech="' + c.tech.join('|') + '">' +
+             '<div class="comp-top"><span class="level-badge ' + c.levelBadgeClass + '">' + esc(c.levelBadge) + '</span>' + statusChip + '</div>' +
+             '<div class="comp-title">' + esc(c.nameShort) + '</div>' +
+             '<div class="comp-meta">' +
+             '<div><span>方向</span>' + esc(tech) + '</div>' +
+             '<div><span>截止</span>' + esc(c.deadline) + '</div>' +
+             '<div><span>组队</span>' + esc(c.teamSize) + '</div>' +
+             fund +
+             '</div></a>';
+    }
+    function internalCard(ic){
+      const lvl = ic.level === 'school' ? 'school' : 'club';
+      return {
+        id: '!internal-' + ic.id,
+        nameShort: ic.name,
+        level: lvl,
+        levelBadge: lvl === 'school' ? '校级' : '社团内部',
+        levelBadgeClass: lvl === 'school' ? 'level-c' : 'level-d',
+        tech: ic.tech ? [ic.tech] : [],
+        techLabels: (ic.skills ? String(ic.skills).split(',') : ['协会内部']).filter(Boolean),
+        funding: { inList: false },
+        deadline: ic.deadline || '待定',
+        teamSize: ic.date ? ic.date : '—',
+      };
+    }
+
+    function syncCards(){ cards = Array.from(grid.querySelectorAll('.comp-card')); }
+    function apply(){
+      let visible = 0;
+      cards.forEach(card=>{
+        const okLevel = !state.level || card.dataset.level === state.level;
+        const cardTech = (card.dataset.tech || '').split('|').filter(Boolean);
+        const okTech = !state.tech || cardTech.includes(state.tech);
+        const show = okLevel && okTech;
+        card.style.display = show ? '' : 'none';
+        if(show) visible++;
+      });
+      countEl.textContent = visible;
+      const parts = [];
+      if(state.level) parts.push('级别：' + groupLabels.level[state.level]);
+      if(state.tech) parts.push('技术类型：' + groupLabels.tech[state.tech]);
+      statusEl.textContent = parts.length ? parts.join(' × ') : '全部竞赛';
+      emptyEl.style.display = visible ? 'none' : 'block';
+    }
+
+    grid.innerHTML = COMPETITIONS.map(cardHTML).join('');
+    syncCards();
+
+    // 协会内部竞赛（管理员在后天 admin.html 发布）
+    fetch('/api/competitions/internal', { credentials: 'same-origin' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.competitions && d.competitions.length){
+          grid.insertAdjacentHTML('beforeend', d.competitions.map(function(ic){ return cardHTML(internalCard(ic)); }).join(''));
+          syncCards();
+          apply();
+        }
+      })
+      .catch(function(){});
+
+    chips.forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        const row = chip.closest('.filter-row');
+        const group = row.dataset.group;
+        state[group] = chip.dataset.value;
+        row.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        apply();
+      });
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      state.level = ''; state.tech = '';
+      chips.forEach(c=>c.classList.toggle('active', c.dataset.value === ''));
+      apply();
+    });
+
+    apply();
+  })();
+
+  // 组队大厅：真实数据（任何登录用户可发布）
+  (function(){
+    const grid = document.getElementById('teamGrid');
+    const emptyEl = document.getElementById('teamEmpty');
+    if(!grid) return;
+    function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+
+    function render(teams){
+      if(!teams || !teams.length){ grid.innerHTML = ''; emptyEl.style.display = 'block'; return; }
+      emptyEl.style.display = 'none';
+      grid.innerHTML = teams.map(t=>{
+        const total = (Number(t.have_count) || 0) + (Number(t.need_count) || 0);
+        const full = t.status === 'closed' || (total > 0 && Number(t.have_count) >= total);
+        const tags = (t.skills ? String(t.skills).split(',').slice(0,3) : []);
+        if(t.grade) tags.push(t.grade);
+        return '<a class="team-card" href="team-detail.html?id=' + t.id + '">' +
+          '<div class="team-status"><span class="dot ' + (full ? 'full' : 'open') + '"></span>' + (full ? '已满员' : '招募中') + '</div>' +
+          '<div class="team-title">' + esc(t.title) + (full ? '' : ' · 缺 ' + (t.need_count || 1) + ' 人') + '</div>' +
+          '<div class="team-tags">' + tags.slice(0,4).map(s=>'<span class="team-tag">'+esc(s)+'</span>').join('') + '</div>' +
+          '<div class="team-foot"><div class="avatars"><div class="avatar">' + esc((t.creator_name || t.creator_username || '友').slice(0,1)) + '</div></div><span>' + (t.have_count||0) + '/' + (total||0) + ' 人</span></div>' +
+          '</a>';
+      }).join('');
+    }
+    fetch('/api/teams', { credentials:'same-origin' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ render(d && d.teams); })
+      .catch(function(){ render([]); });
+  })();
+
+  // 电路点亮效果：光标移到 hero 区域时，光斑跟随移动；离开后缓缓回到中心
+  (function(){
+    const hero = document.querySelector('.hero');
+    const svg = document.getElementById('heroCircuitSvg');
+    const grad = document.getElementById('spotGrad');
+    if(!hero || !svg || !grad) return;
+
+    const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+    const center = {x:550, y:550};
+    let target = {x:center.x, y:center.y};
+    let current = {x:center.x, y:center.y};
+
+    if(reduceMotion) return; // 保持默认居中光斑，不追踪鼠标
+
+    hero.addEventListener('mousemove', (e)=>{
+      const rect = svg.getBoundingClientRect();
+      const scaleX = 1100 / rect.width;
+      const scaleY = 1100 / rect.height;
+      target.x = (e.clientX - rect.left) * scaleX;
+      target.y = (e.clientY - rect.top) * scaleY;
+    });
+    hero.addEventListener('mouseleave', ()=>{
+      target.x = center.x;
+      target.y = center.y;
+    });
+
+    function loop(){
+      current.x += (target.x - current.x) * 0.12;
+      current.y += (target.y - current.y) * 0.12;
+      grad.setAttribute('cx', current.x.toFixed(1));
+      grad.setAttribute('cy', current.y.toFixed(1));
+      requestAnimationFrame(loop);
+    }
+    loop();
+  })();
+</script>
+
+</body>
+</html>

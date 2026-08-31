@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="logo.png">
+<title>发布组队公告 · 创智算</title>
+<style>
+  :root{
+    --ink:#1B241C; --forest:#3F5541; --forest-deep:#2C3B2E;
+    --paper:#F2F1E7; --paper-dim:#E9E7D9; --copper:#B9863B; --signal:#6EE7A8;
+    --line:rgba(27,36,28,0.14);
+    --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(242,241,231,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 32px; max-width:1180px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{width:38px; height:38px; border-radius:50%; background:var(--forest-deep); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .brand-mark svg{width:24px; height:24px;}
+  .brand-name{font-weight:700; font-size:15px;}
+  .brand-sub{font-family:var(--mono); font-size:10px; color:var(--forest); letter-spacing:0.08em;}
+  .nav-links{display:flex; gap:36px; font-size:14px; font-weight:500;}
+  .nav-links a{opacity:0.75;} .nav-links a:hover{opacity:1;}
+  @media(max-width:860px){.nav-links{display:none;}}
+
+  .breadcrumb{font-family:var(--mono); font-size:12px; color:rgba(27,36,28,0.5); padding:28px 0 0; display:flex; gap:8px; align-items:center;}
+  .breadcrumb a{opacity:0.7;} .breadcrumb a:hover{opacity:1; color:var(--forest);}
+  .breadcrumb .sep{opacity:0.4;} .breadcrumb .current{color:var(--ink); opacity:0.9;}
+
+  .page-head{padding:28px 0 8px;}
+  .sec-eyebrow{font-family:var(--mono); font-size:12px; color:var(--copper); letter-spacing:0.1em; margin-bottom:10px; display:block;}
+  .page-title{font-size:clamp(24px,3.4vw,34px); font-weight:800; margin-bottom:10px;}
+  .page-desc{font-size:14px; color:rgba(27,36,28,0.6); max-width:480px; margin-bottom:36px;}
+
+  .post-layout{display:grid; grid-template-columns:1.3fr 1fr; gap:48px; padding-bottom:96px; align-items:start;}
+  @media(max-width:900px){.post-layout{grid-template-columns:1fr;}}
+
+  .form-card{border:1px solid var(--line); border-radius:16px; padding:32px; background:#fff;}
+  fieldset{border:none; margin-bottom:22px;}
+  label{display:block; font-size:13px; font-weight:700; margin-bottom:8px;}
+  .hint{font-size:11.5px; color:rgba(27,36,28,0.45); font-weight:400; margin-left:6px;}
+  input[type=text], input[type=number], input[type=date], textarea, select{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:11px 13px;
+    font-family:var(--sans); font-size:14px; background:var(--paper); color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:90px;}
+  input:focus, textarea:focus, select:focus{outline:2px solid var(--forest); outline-offset:1px;}
+  .row-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+
+  .chip-select{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip-opt{
+    font-size:12.5px; padding:8px 14px; border-radius:100px; border:1px solid var(--line);
+    background:var(--paper); cursor:pointer; user-select:none; transition:.15s;
+  }
+  .chip-opt.active{background:var(--forest-deep); color:var(--paper); border-color:var(--forest-deep);}
+
+  .submit-btn{
+    width:100%; padding:15px; border-radius:100px; border:none; margin-top:8px;
+    background:var(--forest-deep); color:var(--paper); font-size:15px; font-weight:700; cursor:pointer;
+    transition:transform .2s;
+  }
+  .submit-btn:hover{transform:translateY(-2px);}
+  .submit-note{font-size:11.5px; color:rgba(27,36,28,0.45); text-align:center; margin-top:12px;}
+
+  /* preview */
+  .preview-wrap{position:sticky; top:96px;}
+  .preview-label{font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.08em; margin-bottom:14px; display:block;}
+  .preview-card{
+    border:1px solid var(--line); border-radius:16px; padding:22px; background:#fff;
+  }
+  .p-status{display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10.5px; margin-bottom:14px;}
+  .p-status .dot{width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal);}
+  .p-title{font-size:16px; font-weight:700; margin-bottom:10px; min-height:24px;}
+  .p-tags{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; min-height:24px;}
+  .p-tags span{font-size:11px; background:var(--paper-dim); padding:4px 9px; border-radius:6px; color:var(--forest-deep);}
+  .p-foot{display:flex; justify-content:space-between; font-size:12px; color:rgba(27,36,28,0.55);}
+  .p-note{margin-top:20px; font-size:12px; color:rgba(27,36,28,0.5); line-height:1.6;}
+
+  .success-banner{
+    display:none; margin-top:18px; padding:14px 16px; border-radius:12px;
+    background:rgba(110,231,168,0.14); font-size:13px; color:var(--forest-deep);
+    display:none; align-items:center; gap:8px;
+  }
+  .success-banner.show{display:flex;}
+  .success-banner .dot{width:7px; height:7px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal);}
+
+  footer{background:var(--ink); color:var(--paper); padding:56px 0 28px; margin-top:20px;}
+  .foot-bottom{display:flex; justify-content:space-between; font-size:12px; color:rgba(242,241,231,0.4); flex-wrap:wrap; gap:10px;}
+  .foot-bottom span{font-family:var(--mono);}
+  .foot-top{padding-bottom:32px; margin-bottom:24px; border-bottom:1px solid rgba(242,241,231,0.12); font-weight:700;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="brand" href="index.html">
+      <div class="brand-mark"><img src="logo.png" alt="创智算" style="width:100%; height:100%; border-radius:50%; display:block;"></div>
+      <div>
+        <div class="brand-name">"创智算"数字科技协会</div>
+        <div class="brand-sub">CHUANGZHISUAN.CLUB</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#about">关于我们</a>
+      <a href="index.html#fields">前沿领域</a>
+      <a href="index.html#competitions">竞赛中心</a>
+      <a href="index.html#team">组队大厅</a>
+    </div>
+    <span class="auth-slot" id="authSlot"></span>
+  </nav>
+</header>
+
+<div class="wrap">
+  <div class="breadcrumb">
+    <a href="index.html">首页</a><span class="sep">/</span>
+    <a href="index.html#team">组队大厅</a><span class="sep">/</span>
+    <span class="current">发布组队公告</span>
+  </div>
+
+  <div class="page-head">
+    <span class="sec-eyebrow">// 发布公告</span>
+    <h1 class="page-title">发起一支队伍</h1>
+    <p class="page-desc">填写基本信息后公告会出现在组队大厅，右侧是实时预览效果。</p>
+  </div>
+
+  <div class="post-layout">
+    <div class="form-card">
+      <fieldset>
+        <label>关联竞赛 <span class="hint">可选</span></label>
+        <select id="fCompetition">
+          <option value="">请选择关联竞赛（可不选）</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <label>队伍名称</label>
+        <input type="text" id="fTitle" placeholder="如：蓝桥杯 Python 组 · 缺 1 人" maxlength="60">
+      </fieldset>
+
+      <fieldset class="row-2">
+        <div>
+          <label>现有人数</label>
+          <input type="number" id="fHave" min="0" value="1">
+        </div>
+        <div>
+          <label>还需人数</label>
+          <input type="number" id="fNeed" min="1" value="1">
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <label>技能 / 方向标签 <span class="hint">可多选</span></label>
+        <div class="chip-select" id="skillChips">
+          <span class="chip-opt active">软件开发</span>
+          <span class="chip-opt">嵌入式开发</span>
+          <span class="chip-opt">物联网开发</span>
+          <span class="chip-opt">机器人开发</span>
+          <span class="chip-opt">具身智能</span>
+          <span class="chip-opt">人工智能 AI</span>
+          <span class="chip-opt">创新创业</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <label>年级要求 <span class="hint">可选</span></label>
+        <input type="text" id="fGrade" placeholder="如：大一 / 大二优先" maxlength="30">
+      </fieldset>
+
+      <fieldset>
+        <label>招募说明</label>
+        <textarea id="fDesc" placeholder="介绍队伍现状、希望队友具备的能力、日常练习安排等" maxlength="1000"></textarea>
+      </fieldset>
+
+      <fieldset class="row-2">
+        <div>
+          <label>联系方式</label>
+          <input type="text" id="fContact" placeholder="微信号 / QQ 号" maxlength="60">
+        </div>
+        <div>
+          <label>公告截止时间 <span class="hint">可选</span></label>
+          <input type="date" id="fDeadline">
+        </div>
+      </fieldset>
+
+      <button class="submit-btn" id="submitBtn">发布公告</button>
+      <div class="submit-note">发布后公告将实时出现在组队大厅，任何登录用户都可发布；申请入队由你审核</div>
+      <div class="success-banner" id="successBanner"><span class="dot"></span>公告已发布，正在跳转到组队大厅…</div>
+    </div>
+
+    <div class="preview-wrap">
+      <span class="preview-label">// 实时预览</span>
+      <div class="preview-card">
+        <div class="p-status"><span class="dot"></span>招募中</div>
+        <div class="p-title" id="pTitle">（队伍名称）</div>
+        <div class="p-tags" id="pTags"><span>软件开发</span><span>大二</span></div>
+        <div class="p-foot"><span id="pCount">2/3 人</span></div>
+      </div>
+      <p class="p-note">这是你的公告在组队大厅列表中的展示样式，标签与人数会随左侧表单实时更新。</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">"创智算"数字科技协会</div>
+    <div class="foot-bottom">
+      <span>© 2026 CHUANGZHISUAN DIGITAL TECH ASSOCIATION</span>
+      <span>BUILD · V1.0 · PHASE-1</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/auth-ui.js"></script>
+<script src="js/pay-gate.js"></script>
+<script src="js/competitions-data.js"></script>
+<script>
+  const fCompetition = document.getElementById('fCompetition');
+  const fTitle = document.getElementById('fTitle');
+  const fHave = document.getElementById('fHave');
+  const fNeed = document.getElementById('fNeed');
+  const fGrade = document.getElementById('fGrade');
+  const fDesc = document.getElementById('fDesc');
+  const fContact = document.getElementById('fContact');
+  const pTitle = document.getElementById('pTitle');
+  const pCount = document.getElementById('pCount');
+  const pTags = document.getElementById('pTags');
+  const chips = document.querySelectorAll('#skillChips .chip-opt');
+  const submitBtn = document.getElementById('submitBtn');
+  const successBanner = document.getElementById('successBanner');
+
+  // 关联竞赛下拉：静态竞赛 + 协会内部竞赛（管理员发布）
+  function fillCompetitions(){
+    const opts = (window.COMPETITIONS || []).slice();
+    fetch('/api/competitions/internal', { credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(d => {
+        (d && d.competitions || []).forEach(ic => {
+          opts.push({ id: '!internal-' + ic.id, nameShort: ic.name, internal: true, level: ic.level });
+        });
+        opts.forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.id;
+          const prefix = c.internal ? ('[' + (c.level === 'school' ? '校级' : '社团内部') + '] ') : '';
+          o.textContent = prefix + c.nameShort;
+          fCompetition.append(o);
+        });
+      })
+      .catch(() => {
+        opts.forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.id;
+          o.textContent = c.nameShort;
+          fCompetition.append(o);
+        });
+      });
+  }
+
+  function updatePreview(){
+    pTitle.textContent = fTitle.value || '（队伍名称）';
+    const have = Number(fHave.value) || 0;
+    const need = Number(fNeed.value) || 0;
+    pCount.textContent = have + '/' + (have + need) + ' 人';
+    const active = Array.from(chips).filter(c => c.classList.contains('active')).map(c => c.textContent);
+    let tags = active.slice(0,2);
+    if(fGrade.value) tags.push(fGrade.value);
+    pTags.innerHTML = tags.map(t => `<span>${t}</span>`).join('');
+  }
+
+  [fTitle, fHave, fNeed, fGrade].forEach(el => el.addEventListener('input', updatePreview));
+
+  chips.forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      chip.classList.toggle('active');
+      updatePreview();
+    });
+  });
+
+  function selectedCompetitionName(){
+    const opt = fCompetition.selectedOptions && fCompetition.selectedOptions[0];
+    if(!opt || !opt.value) return '';
+    const c = (window.COMPETITIONS || []).find(x => x.id === opt.value);
+    if(c) return c.nameShort;
+    return opt.textContent.replace('[协会内部] ', '');
+  }
+
+  async function publishAnnouncement(){
+    const title = fTitle.value.trim();
+    if(!title){ alert('请填写队伍名称'); return; }
+    submitBtn.disabled = true;
+    submitBtn.textContent = '正在发布…';
+    try{
+      const r = await fetch('/api/team/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          title,
+          competitionId: fCompetition.value,
+          competitionName: selectedCompetitionName(),
+          skills: Array.from(chips).filter(c => c.classList.contains('active')).map(c => c.textContent),
+          haveCount: Number(fHave.value) || 0,
+          needCount: Number(fNeed.value) || 1,
+          grade: fGrade.value,
+          contact: fContact.value,
+          description: fDesc.value,
+        }),
+      });
+      const d = await r.json();
+      if(r.ok && d.ok){
+        successBanner.classList.add('show');
+        setTimeout(() => {
+          location.href = 'team-detail.html?id=' + d.id;
+        }, 900);
+      } else {
+        alert(d && d.msg ? d.msg : '发布失败，请重试');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '发布公告';
+      }
+    }catch(e){
+      alert('网络错误，请重试');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '发布公告';
+    }
+  }
+
+  submitBtn.addEventListener('click', publishAnnouncement);
+  fillCompetitions();
+  updatePreview();
+</script>
+
+</body>
+</html>

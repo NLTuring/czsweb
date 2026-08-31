@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>联系社长 · 创智算</title>
+<style>
+  :root{
+    --ink:#1B241C; --forest:#3F5541; --forest-deep:#2C3B2E;
+    --paper:#F2F1E7; --copper:#B9863B; --signal:#6EE7A8;
+    --line:rgba(27,36,28,0.14);
+    --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:var(--paper); color:var(--ink); font-family:var(--sans); padding:24px;
+    background-image:
+      linear-gradient(rgba(63,85,65,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(63,85,65,0.05) 1px, transparent 1px);
+    background-size:44px 44px;
+  }
+  .card{
+    width:100%; max-width:420px; background:#fff; border:1px solid var(--line);
+    border-radius:18px; padding:36px 34px; box-shadow:0 18px 50px rgba(44,59,46,0.12);
+    text-align:center;
+  }
+  .brand{display:flex; align-items:center; gap:12px; margin-bottom:26px; justify-content:center; text-align:left;}
+  .brand-mark{width:42px; height:42px; border-radius:50%; overflow:hidden; flex-shrink:0; border:1px solid var(--line);}
+  .brand-mark img{width:100%; height:100%; object-fit:cover; display:block;}
+  .brand-name{font-weight:700; font-size:16px;}
+  .brand-sub{font-family:var(--mono); font-size:10px; color:var(--forest); letter-spacing:0.08em;}
+  h1{font-size:22px; font-weight:800; margin-bottom:6px;}
+  .sub{font-size:13px; color:rgba(27,36,28,0.55); margin-bottom:24px;}
+  .qq-label{font-family:var(--mono); font-size:11px; letter-spacing:0.1em; color:var(--copper); margin-bottom:8px; display:block;}
+  .qq-num{
+    font-family:var(--mono); font-size:44px; font-weight:800; color:var(--forest-deep);
+    letter-spacing:0.04em; line-height:1.1; margin-bottom:6px;
+    text-shadow:0 0 22px rgba(110,231,168,0.35);
+  }
+  .qq-tip{font-size:12.5px; color:rgba(27,36,28,0.55); margin-bottom:22px; line-height:1.7;}
+  .btn{
+    display:block; width:100%; padding:13px; border-radius:100px; border:none;
+    background:var(--forest-deep); color:var(--paper); font-size:14.5px; font-weight:700;
+    cursor:pointer; transition:transform .15s; font-family:var(--sans);
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-copied{background:var(--signal); color:var(--forest-deep);}
+  .steps{
+    margin-top:20px; padding:14px 16px; background:var(--paper); border-radius:12px;
+    text-align:left; font-size:12px; color:rgba(27,36,28,0.6); line-height:1.9;
+  }
+  .steps b{color:var(--forest-deep);}
+  .back{display:inline-block; margin-top:18px; font-size:12.5px; color:var(--forest); font-weight:600; text-decoration:underline; text-underline-offset:3px;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">
+    <div class="brand-mark"><img src="logo.png" alt="创智算"></div>
+    <div>
+      <div class="brand-name">"创智算"数字科技协会</div>
+      <div class="brand-sub">CHUANGZHISUAN.CLUB</div>
+    </div>
+  </div>
+
+  <h1>联系社长</h1>
+  <p class="sub">加入交流群 · 意见反馈 · 咨询入会，均可通过 QQ 找到社长。</p>
+
+  <span class="qq-label">社长 QQ 号</span>
+  <div class="qq-num">2140533250</div>
+  <p class="qq-tip">请复制下方 QQ 号，在手机 / 电脑 QQ 中搜索并添加好友。</p>
+
+  <button class="btn" id="copyBtn">一键复制 QQ 号</button>
+
+  <div class="steps">
+    <b>如何联系：</b><br>
+    1. 点击上方按钮复制 QQ 号；<br>
+    2. 打开手机或电脑 QQ → 搜索该号码；<br>
+    3. 发送好友申请，添加后即可交流。
+  </div>
+
+  <a class="back" href="index.html">← 返回首页</a>
+</div>
+
+<script>
+  const QQ = '2140533250';
+  const btn = document.getElementById('copyBtn');
+
+  function copied(){
+    btn.textContent = '✓ 已复制，去 QQ 添加吧';
+    btn.classList.add('btn-copied');
+    setTimeout(function(){ btn.textContent = '一键复制 QQ 号'; btn.classList.remove('btn-copied'); }, 2200);
+  }
+
+  btn.addEventListener('click', function(){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(QQ).then(copied).catch(function(){ fallbackCopy(); });
+    } else {
+      fallbackCopy();
+    }
+  });
+
+  function fallbackCopy(){
+    const ta = document.createElement('textarea');
+    ta.value = QQ;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.append(ta);
+    ta.select();
+    try{ document.execCommand('copy'); copied(); }catch(e){ prompt('请手动复制 QQ 号：', QQ); }
+    ta.remove();
+  }
+</script>
+</body>
+</html>
