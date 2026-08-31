@@ -292,7 +292,7 @@ async function proofStatusOf(userId) {
 
 /* ---------------- 文件上传（本地文件系统） ---------------- */
 const UPLOAD_DIR = path.join(ROOT, 'uploads');
-fs.mkdirSync(path.join(UPLOAD_DIR, 'proofs'), { recursive: true });
+try { fs.mkdirSync(path.join(UPLOAD_DIR, 'proofs'), { recursive: true }); } catch (e) { /* 只读环境（如 CI/Serverless）忽略 */ }
 
 function saveBase64Image(dataUrl, dir, prefix, maxBytes) {
   const m = /^data:image\/(png|jpe?g|webp);base64,(.+)$/.exec(String(dataUrl || ''));
