@@ -1,6 +1,11 @@
 {
   "cleanUrls": false,
   "trailingSlash": false,
+  "functions": {
+    "index.js": {
+      "includeFiles": "**/*"
+    }
+  },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/index.js" },
     { "source": "/(.*)", "destination": "/index.js" }
