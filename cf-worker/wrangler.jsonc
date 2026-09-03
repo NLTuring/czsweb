@@ -1,0 +1,44 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "czsweb",
+  "main": "src/index.js",
+  "compatibility_date": "2024-11-11",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "none",
+    "not_found_handling": "none"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "czsweb-db",
+      "database_id": "2a5b7bfa-9ffc-4210-a648-bfc7480144b8"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "16ff0d07499245909b51d57f83866dd7"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "czsweb.club/*",
+      "zone_name": "czsweb.club"
+    },
+    {
+      "pattern": "www.czsweb.club/*",
+      "zone_name": "czsweb.club"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "ADMIN_USERNAME": "admin"
+  }
+}

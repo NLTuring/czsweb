@@ -1,0 +1,428 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="logo.png">
+<title>技术方向 · 创智算</title>
+<style>
+  :root{
+    --ink:#1B241C; --forest:#3F5541; --forest-deep:#2C3B2E;
+    --paper:#F2F1E7; --paper-dim:#E9E7D9; --copper:#B9863B; --signal:#6EE7A8;
+    --line:rgba(27,36,28,0.14);
+    --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--forest-deep); color:var(--paper); font-family:var(--sans); line-height:1.6;
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  /* 网格背景 */
+  body::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      linear-gradient(rgba(110,231,168,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(110,231,168,0.05) 1px, transparent 1px);
+    background-size:44px 44px;
+  }
+  body::after{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:radial-gradient(ellipse 900px 500px at 75% -10%, rgba(110,231,168,0.14), transparent 60%);
+  }
+
+  header{position:sticky; top:0; z-index:50; background:rgba(28,40,31,0.85); backdrop-filter:blur(12px); border-bottom:1px solid rgba(110,231,168,0.18);}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 32px; max-width:1180px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{width:38px; height:38px; border-radius:50%; background:var(--forest-deep); border:1px solid rgba(110,231,168,0.4); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .brand-mark svg{width:24px; height:24px;}
+  .brand-name{font-weight:700; font-size:15px;}
+  .brand-sub{font-family:var(--mono); font-size:10px; color:var(--signal); letter-spacing:0.08em;}
+  .nav-links{display:flex; gap:36px; font-size:14px; font-weight:500;}
+  .nav-links a{opacity:0.75;} .nav-links a:hover{opacity:1; color:var(--signal);}
+  .nav-cta{font-family:var(--mono); font-size:12px; background:var(--signal); color:var(--forest-deep); padding:9px 18px; border-radius:100px; display:flex; align-items:center; gap:6px; font-weight:700;}
+  .nav-cta::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--forest-deep); box-shadow:0 0 6px var(--forest-deep);}
+  @media(max-width:860px){.nav-links{display:none;}}
+
+  .main{position:relative; z-index:1;}
+
+  .breadcrumb{font-family:var(--mono); font-size:12px; color:rgba(242,241,231,0.45); padding:28px 0 0; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .breadcrumb a{opacity:0.7;} .breadcrumb a:hover{opacity:1; color:var(--signal);}
+  .breadcrumb .sep{opacity:0.4;}
+  .breadcrumb .current{color:var(--paper); opacity:0.9;}
+
+  /* hero */
+  .hero{position:relative; padding:56px 0 64px;}
+  .hero-grid{display:grid; grid-template-columns:auto 1fr; gap:32px; align-items:start;}
+  @media(max-width:720px){.hero-grid{grid-template-columns:1fr; gap:22px;}}
+  .hero-icon{
+    width:110px; height:110px; border-radius:18px; flex-shrink:0;
+    background:rgba(110,231,168,0.08); border:1px solid rgba(110,231,168,0.45);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:38px; font-weight:800; color:var(--signal);
+    box-shadow:0 0 34px rgba(110,231,168,0.22), inset 0 0 24px rgba(110,231,168,0.08);
+    position:relative;
+  }
+  .hero-icon::after{
+    content:''; position:absolute; inset:-10px; border-radius:22px;
+    border:1px dashed rgba(110,231,168,0.28); animation:spin 24s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .eyebrow{font-family:var(--mono); font-size:12px; color:var(--signal); letter-spacing:0.12em; margin-bottom:12px; display:flex; align-items:center; gap:10px;}
+  .eyebrow::before{content:'//'; color:var(--copper); font-weight:700;}
+  h1{font-size:clamp(34px,5.5vw,56px); font-weight:800; letter-spacing:-0.01em; line-height:1.12;}
+  h1 .accent{color:var(--signal); text-shadow:0 0 18px rgba(110,231,168,0.5);}
+  .motto{
+    font-family:var(--mono); font-size:13px; letter-spacing:0.18em; color:var(--signal);
+    margin-top:14px; display:inline-flex; align-items:center; gap:8px; opacity:0.9;
+  }
+  .motto::before{content:'>'; color:var(--copper);}
+  .hero-desc{margin-top:18px; font-size:15px; color:rgba(242,241,231,0.68); max-width:560px;}
+
+  /* section shells */
+  .sec{padding:52px 0;}
+  .sec-head{margin-bottom:30px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;}
+  .sec-eyebrow{font-family:var(--mono); font-size:12px; color:var(--copper); letter-spacing:0.1em; display:block;}
+  .sec-title{font-size:clamp(20px,2.6vw,27px); font-weight:800;}
+  .sec-title .num{font-family:var(--mono); color:var(--signal); margin-right:10px; opacity:0.8;}
+  .sec-desc{font-size:12.5px; color:rgba(242,241,231,0.45); margin-left:auto; font-family:var(--mono);}
+
+  /* tech stack */
+  .stack-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+  @media(max-width:900px){.stack-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.stack-grid{grid-template-columns:1fr;}}
+  .stack-item{
+    border:1px solid rgba(110,231,168,0.22); border-radius:12px; padding:16px 18px;
+    background:rgba(255,255,255,0.03); display:flex; align-items:center; gap:12px;
+    transition:border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .stack-item:hover{
+    border-color:var(--signal); transform:translateY(-2px);
+    box-shadow:0 8px 26px rgba(110,231,168,0.14);
+  }
+  .stack-item .dot{width:7px; height:7px; border-radius:50%; background:var(--signal); box-shadow:0 0 8px var(--signal); flex-shrink:0;}
+  .stack-item span{font-family:var(--mono); font-size:13.5px; color:rgba(242,241,231,0.92);}
+
+  /* resources */
+  .res-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  @media(max-width:760px){.res-grid{grid-template-columns:1fr;}}
+  .res-card{
+    border:1px solid rgba(110,231,168,0.22); border-radius:16px; padding:22px;
+    background:rgba(255,255,255,0.03); position:relative; overflow:hidden;
+    transition:border-color .2s, transform .2s;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .res-card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--signal), transparent 70%);
+  }
+  .res-card:hover{border-color:var(--signal); transform:translateY(-2px);}
+  .res-top{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .res-type{font-family:var(--mono); font-size:10px; letter-spacing:0.06em; padding:3px 10px; border-radius:100px; border:1px solid rgba(110,231,168,0.4); color:var(--signal);}
+  .res-type.docs{border-color:rgba(185,134,59,0.55); color:var(--copper);}
+  .res-type.course{border-color:rgba(110,231,168,0.4); color:var(--signal);}
+  .res-type.route{border-color:rgba(242,241,231,0.35); color:rgba(242,241,231,0.75);}
+  .res-type.netdisk{border-color:rgba(110,231,168,0.7); color:var(--signal); background:rgba(110,231,168,0.1);}
+  .res-type.project{border-color:rgba(185,134,59,0.55); color:var(--copper);}
+  .res-title{font-size:15.5px; font-weight:700; color:var(--paper);}
+  .res-desc{font-size:12.5px; color:rgba(242,241,231,0.55); line-height:1.7; flex:1;}
+  .res-link{
+    align-self:flex-start; font-family:var(--mono); font-size:12px; color:var(--forest-deep);
+    background:var(--signal); padding:7px 16px; border-radius:100px; font-weight:700;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .res-link:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(110,231,168,0.35);}
+  .res-soon{
+    align-self:flex-start; font-family:var(--mono); font-size:11.5px; color:rgba(242,241,231,0.5);
+    border:1px dashed rgba(242,241,231,0.3); padding:6px 14px; border-radius:100px;
+  }
+
+  /* competitions */
+  .comp-list{display:flex; flex-direction:column; gap:0; border:1px solid rgba(110,231,168,0.22); border-radius:16px; overflow:hidden; background:rgba(255,255,255,0.02);}
+  .comp-row{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:16px 20px; border-bottom:1px solid rgba(110,231,168,0.12); transition:background .15s;
+  }
+  .comp-row:last-child{border-bottom:none;}
+  .comp-row:hover{background:rgba(110,231,168,0.07);}
+  .comp-name{font-size:14.5px; font-weight:700;}
+  .comp-meta{font-family:var(--mono); font-size:11px; color:rgba(242,241,231,0.5); margin-top:3px;}
+  .comp-arrow{font-family:var(--mono); color:var(--signal); font-size:16px; flex-shrink:0;}
+
+  /* soon state */
+  .soon-box{
+    border:1px dashed rgba(242,241,231,0.3); border-radius:16px; text-align:center;
+    padding:70px 20px; margin:40px 0 80px;
+  }
+  .soon-box .tag{font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.12em; display:block; margin-bottom:12px;}
+  .soon-box b{font-size:20px; font-weight:800; display:block; margin-bottom:8px;}
+  .soon-box p{font-size:13px; color:rgba(242,241,231,0.55);}
+
+  /* 网盘资源 */
+  .netdisk-section .res-head{margin-bottom:16px;}
+  .netdisk-section .res-head a{
+    font-family:var(--mono); font-size:12px; color:var(--signal);
+    display:inline-flex; align-items:center; gap:6px; margin-left:auto; float:right; opacity:.85;
+  }
+  .netdisk-section .res-head a:hover{opacity:1; text-decoration:underline; text-underline-offset:4px;}
+  .nd-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px;}
+  @media(max-width:760px){.nd-grid{grid-template-columns:1fr;}}
+  .nd-card{
+    border:1px solid rgba(110,231,168,0.2); border-radius:12px; padding:16px;
+    background:rgba(110,231,168,0.04); display:flex; flex-direction:column; gap:8px;
+    transition:border-color .2s, transform .2s;
+  }
+  .nd-card:hover{border-color:var(--signal); transform:translateY(-2px);}
+  .nd-title{font-size:13.5px; font-weight:700; color:var(--paper); line-height:1.5;}
+  .nd-meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-family:var(--mono); font-size:10.5px; color:rgba(242,241,231,0.5);}
+  .nd-disk{color:var(--copper); border:1px solid rgba(185,134,59,0.5); padding:1px 8px; border-radius:100px;}
+  .nd-code{color:var(--signal); border:1px dashed rgba(110,231,168,0.45); padding:1px 8px; border-radius:8px;}
+  .nd-open{
+    align-self:flex-start; font-family:var(--mono); font-size:11.5px; color:var(--forest-deep);
+    background:var(--signal); padding:6px 14px; border-radius:100px; font-weight:700;
+    transition:transform .15s;
+  }
+  .nd-open:hover{transform:translateY(-1px);}
+
+  .back-link{
+    display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12.5px;
+    color:var(--signal); margin-top:44px; opacity:0.85;
+  }
+  .back-link:hover{opacity:1; text-decoration:underline; text-underline-offset:4px;}
+
+  footer{border-top:1px solid rgba(110,231,168,0.15); padding:40px 0 28px; margin-top:60px; background:rgba(20,30,22,0.6);}
+  .foot-bottom{display:flex; justify-content:space-between; font-size:12px; color:rgba(242,241,231,0.4); flex-wrap:wrap; gap:10px;}
+  .foot-bottom span{font-family:var(--mono);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="brand" href="index.html">
+      <div class="brand-mark"><img src="logo.png" alt="创智算" style="width:100%; height:100%; border-radius:50%; display:block;"></div>
+      <div>
+        <div class="brand-name">"创智算"数字科技协会</div>
+        <div class="brand-sub">CHUANGZHISUAN.CLUB</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#about">关于我们</a>
+      <a href="index.html#fields">前沿领域</a>
+      <a href="index.html#competitions">竞赛中心</a>
+      <a href="index.html#team">组队大厅</a>
+    </div>
+    <span class="auth-slot" id="authSlot"></span>
+    <a class="nav-cta" href="team-post.html">发起组队</a>
+  </nav>
+</header>
+
+<div class="main">
+  <div class="wrap" id="fieldRoot"></div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-bottom">
+      <span>© 2026 CHUANGZHISUAN DIGITAL TECH ASSOCIATION</span>
+      <span>BUILD · V1.1 · DATA-DRIVEN</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/auth-ui.js?v=2"></script>
+<script src="js/pay-gate.js"></script>
+<script src="js/fields-data.js"></script>
+<script src="js/competitions-data.js"></script>
+<script src="js/resources-data.js"></script>
+<script>
+(function(){
+  const root = document.getElementById('fieldRoot');
+  const params = new URLSearchParams(location.search);
+  const field = FIELDS.find(f => f.id === params.get('id')) || FIELDS[0];
+
+  document.title = field.name + ' · 技术方向 · 创智算';
+
+  function el(tag, cls, text){
+    const e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+
+  // 报名状态：open 报名中 / closed 已截止 / null 无法判定
+  function regStatus(deadline){
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(deadline || '');
+    if(!m) return null;
+    const d = new Date(+m[1], +m[2] - 1, +m[3]);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return today > d ? 'closed' : 'open';
+  }
+
+  /* breadcrumb */
+  const crumb = el('div', 'breadcrumb');
+  const homeA = el('a','','首页'); homeA.href = 'index.html';
+  const fieldA = el('a','','前沿领域'); fieldA.href = 'index.html#fields';
+  crumb.append(homeA, el('span','sep','/'), fieldA, el('span','sep','/'), el('span','current', field.name));
+
+  /* hero */
+  const hero = el('div', 'hero');
+  const heroGrid = el('div', 'hero-grid');
+  const iconBox = el('div', 'hero-icon', field.icon);
+  const heroText = el('div');
+  heroText.append(
+    el('div', 'eyebrow', 'FIELD // ' + field.tag.split(' · ')[1] + ' · 技术方向'),
+  );
+  const h1 = el('h1', '', '');
+  h1.append(document.createTextNode(field.name));
+  heroText.append(h1);
+  if(field.motto) heroText.append(el('div', 'motto', field.motto));
+  heroText.append(el('p', 'hero-desc', field.desc));
+  heroGrid.append(iconBox, heroText);
+  hero.append(heroGrid);
+
+  root.append(crumb, hero);
+
+  if(field.status === 'soon'){
+    const box = el('div', 'soon-box');
+    box.append(el('span','tag','// UNDER CONSTRUCTION'), el('b','该方向规划中'), el('p', field.desc + ' —— 敬请期待，欢迎向协会提交你的建议。'));
+    const back = el('a', 'back-link', '← 返回全部技术方向');
+    back.href = 'index.html#fields';
+    root.append(box, back);
+    return;
+  }
+
+  /* tech stack */
+  let secNo = 0;
+  const secStack = el('section', 'sec');
+  const sh1 = el('div', 'sec-head');
+  const sh1Inner = el('div');
+  sh1Inner.append(el('span','sec-eyebrow','// TECH STACK'), el('h2','sec-title','', ''));
+  const t1 = el('h2','sec-title');
+  t1.append(el('span','num', String(++secNo).padStart(2,'0')), document.createTextNode('技术栈'));
+  sh1Inner.append(t1);
+  sh1.append(sh1Inner, el('span','sec-desc','STACK / ' + field.techStack.length + ' ITEMS'));
+  const stackGrid = el('div', 'stack-grid');
+  field.techStack.forEach(s=>{
+    const item = el('div', 'stack-item');
+    item.append(el('span','dot'), el('span','', s));
+    stackGrid.append(item);
+  });
+  secStack.append(sh1, stackGrid);
+  root.append(secStack);
+
+  /* resources */
+  const secRes = el('section', 'sec');
+  const sh2 = el('div', 'sec-head');
+  const sh2Inner = el('div');
+  sh2Inner.append(el('span','sec-eyebrow','// LEARNING RESOURCES'));
+  const t2 = el('h2','sec-title');
+  t2.append(el('span','num', String(++secNo).padStart(2,'0')), document.createTextNode('学习资源'));
+  sh2Inner.append(t2);
+  sh2.append(sh2Inner, el('span','sec-desc','RESOURCES / ' + field.resources.length + ' ITEMS'));
+  const resGrid = el('div', 'res-grid');
+  const typeClass = { '官方文档':'docs', '入门课程':'course', '进阶路线':'route', '网盘资源':'netdisk', '实践项目':'project' };
+  field.resources.forEach(r=>{
+    const card = el('div', 'res-card');
+    const top = el('div', 'res-top');
+    top.append(el('span','res-type ' + (typeClass[r.type] || ''), r.type));
+    card.append(top, el('div','res-title', r.title), el('div','res-desc', r.desc));
+    if(r.url){
+      const a = el('a', 'res-link', '访问资源 ↗');
+      a.href = r.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      card.append(a);
+    } else {
+      card.append(el('span', 'res-soon', '资源整理中 · 即将上线'));
+    }
+    resGrid.append(card);
+  });
+  secRes.append(sh2, resGrid);
+  root.append(secRes);
+
+  /* related competitions */
+  const comps = (field.competitions || []).map(id => COMPETITIONS.find(c => c.id === id)).filter(Boolean);
+  if(comps.length){
+    const secComp = el('section', 'sec');
+    const sh3 = el('div', 'sec-head');
+    const sh3Inner = el('div');
+    sh3Inner.append(el('span','sec-eyebrow','// COMPETITIONS'));
+    const t3 = el('h2','sec-title');
+    t3.append(el('span','num', String(++secNo).padStart(2,'0')), document.createTextNode('竞赛衔接'));
+    sh3Inner.append(t3);
+    sh3.append(sh3Inner, el('span','sec-desc','MATCH / ' + comps.length + ' ITEMS'));
+    const list = el('div', 'comp-list');
+    comps.forEach(c=>{
+      const row = el('a', 'comp-row');
+      row.href = 'competition-detail.html?id=' + c.id;
+      const left = el('div');
+      const regSt = regStatus(c.deadline);
+      const deadlineLabel = c.deadline + (regSt === 'open' ? ' · 报名中' : regSt === 'closed' ? ' · 已截止' : '');
+      left.append(el('div','comp-name', c.name), el('div','comp-meta', (c.levelBadge + ' · 截止 ' + deadlineLabel + (c.funding.inList ? (' · 立项 ¥' + c.funding.amount.toFixed(1) + '万') : ''))));
+      row.append(left, el('span','comp-arrow','→'));
+      list.append(row);
+    });
+    secComp.append(sh3, list);
+    root.append(secComp);
+  }
+
+  /* 网盘资源（来自协会资源库） */
+  if(window.RESOURCES && (field.id === 'kaoyan' || (field.resourceKeywords && field.resourceKeywords.length))){
+    const kws = field.resourceKeywords.map(k => k.toLowerCase());
+    let matched = RESOURCES.filter(r => {
+      if(field.id === 'kaoyan') return r.sheet === 'kaoyan';
+      const hay = (r.name + ' ' + r.category + ' ' + r.type + ' ' + r.disk).toLowerCase();
+      return kws.some(k => hay.includes(k));
+    });
+    matched = matched.slice(0, 6);
+
+    const secNd = el('section', 'sec netdisk-section');
+    const sh4 = el('div', 'sec-head');
+    const sh4Inner = el('div');
+    sh4Inner.append(el('span','sec-eyebrow','// NETDISK RESOURCES'));
+    const t4 = el('h2','sec-title');
+    t4.append(el('span','num', String(++secNo).padStart(2,'0')), document.createTextNode('网盘资源'));
+    sh4Inner.append(t4);
+    sh4.append(sh4Inner, el('span','sec-desc','来自协会资源库 · 共 ' + RESOURCES.length + ' 条'));
+    const ndGrid = el('div', 'nd-grid');
+    if(matched.length){
+      matched.forEach(r=>{
+        const card = el('div', 'nd-card');
+        card.append(el('div','nd-title', r.name));
+        const meta = el('div','nd-meta');
+        meta.append(el('span','', r.date || ''), el('span','nd-disk', r.disk || '网盘'));
+        if(r.code) meta.append(el('span','nd-code', '提取码 ' + r.code));
+        card.append(meta);
+        const open = el('a','nd-open', '打开网盘 ↗');
+        open.href = r.url; open.target = '_blank'; open.rel = 'noopener';
+        card.append(open);
+        ndGrid.append(card);
+      });
+    } else {
+      const emptyNd = el('div', 'nd-empty', '本方向暂无匹配的网盘资源，可前往完整资源库搜索。');
+      emptyNd.style.cssText = 'border:1px dashed rgba(242,241,231,0.25); border-radius:12px; padding:22px; text-align:center; color:rgba(242,241,231,0.5); font-size:13px; grid-column:1/-1;';
+      ndGrid.append(emptyNd);
+    }
+    const moreRow = el('div');
+    moreRow.style.cssText = 'margin-top:14px; text-align:right;';
+    const more = el('a', 'res-more', '进入完整学习资源库（' + RESOURCES.length + ' 条）→');
+    more.href = 'resources.html';
+    more.style.cssText = 'font-family:var(--mono); font-size:12.5px; color:var(--signal); opacity:0.85;';
+    moreRow.append(more);
+    secNd.append(sh4, ndGrid, moreRow);
+    root.append(secNd);
+  }
+
+  const back = el('a', 'back-link', '← 返回全部技术方向');
+  back.href = 'index.html#fields';
+  root.append(back);
+})();
+</script>
+
+</body>
+</html>

@@ -23,3 +23,34 @@ Thumbs.db
 # Neon / Vercel 本地缓存
 .neon/
 .vercel/
+
+# ===== 个人/隐私素材（不提交公开仓库）=====
+# 个人简历
+*简历*.docx
+*简历*.pdf
+*简历*.md
+*简历*.html
+*简历*.txt
+*简历v2*
+*简历-*
+*简历_*
+孙国豪*
+# 项目介绍文档（内部资料）
+*项目介绍*.docx
+猎鹰*
+啄木鸟*
+# 奶龙原图素材
+nailong/
+# 临时/调试文件
+_resume_*
+_tmp*/
+_tmp*
+pos.png
+test_cn.pdf
+DEPLOY_NOW.md
+fix_*.py
+scan_resume.py
+gen_resume.py
+# Cloudflare Worker 本地工具脚本（保留 src/、wrangler.jsonc、package.json）
+cf-worker/*.js
+cf-worker/gen-kb-module.js

@@ -1,0 +1,14 @@
+{
+  "name": "czsweb-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "创智算网站 Cloudflare Workers 版",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build:assets": "node prepare-assets.js"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

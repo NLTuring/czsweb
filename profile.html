@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="logo.png">
+<title>个人主页 · 创智算</title>
+<style>
+  :root{
+    --ink:#1B241C; --forest:#3F5541; --forest-deep:#2C3B2E;
+    --paper:#F2F1E7; --paper-dim:#E9E7D9; --copper:#B9863B; --signal:#6EE7A8;
+    --line:rgba(27,36,28,0.14);
+    --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(242,241,231,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 32px; max-width:1180px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{width:38px; height:38px; border-radius:50%; background:var(--forest-deep); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .brand-mark svg{width:24px; height:24px;}
+  .brand-name{font-weight:700; font-size:15px;}
+  .brand-sub{font-family:var(--mono); font-size:10px; color:var(--forest); letter-spacing:0.08em;}
+  .nav-links{display:flex; gap:36px; font-size:14px; font-weight:500;}
+  .nav-links a{opacity:0.75;} .nav-links a:hover{opacity:1;}
+  @media(max-width:860px){.nav-links{display:none;}}
+
+  .page-head{padding:36px 0 8px;}
+  .sec-eyebrow{font-family:var(--mono); font-size:12px; color:var(--copper); letter-spacing:0.1em; margin-bottom:10px; display:block;}
+  .page-title{font-size:clamp(24px,3.4vw,34px); font-weight:800; margin-bottom:10px;}
+
+  /* 个人资料卡 */
+  .profile-card{display:flex; align-items:center; gap:24px; border:1px solid var(--line); border-radius:16px; padding:28px; background:#fff; margin-bottom:36px; flex-wrap:wrap;}
+  .profile-avatar{width:96px; height:96px; border-radius:50%; border:3px solid var(--forest); object-fit:cover; background:var(--paper-dim); flex-shrink:0;}
+  .profile-info{flex:1; min-width:220px;}
+  .profile-name{font-size:24px; font-weight:800; display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  .profile-username{font-family:var(--mono); font-size:12.5px; color:rgba(27,36,28,0.5);}
+  .profile-stats{display:flex; gap:24px; margin-top:10px;}
+  .stat b{font-size:18px;} .stat span{font-size:12px; color:rgba(27,36,28,0.55);}
+  .profile-actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .btn{display:inline-block; border:1px solid var(--forest); border-radius:100px; padding:9px 22px; font-size:13.5px; font-weight:700; cursor:pointer; background:transparent; color:var(--forest); transition:.15s;}
+  .btn:hover{background:rgba(63,85,65,0.08);}
+  .btn.solid{background:var(--forest-deep); color:var(--paper); border-color:var(--forest-deep);}
+  .btn.solid:hover{background:var(--forest);}
+
+  /* 作品区 */
+  .works-head{display:flex; align-items:center; justify-content:space-between; margin:8px 0 18px; flex-wrap:wrap; gap:12px;}
+  .works-title{font-size:19px; font-weight:800;}
+  .works-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; padding-bottom:80px;}
+  @media(max-width:860px){.works-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.works-grid{grid-template-columns:1fr;}}
+  .work-card{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; display:flex; flex-direction:column;}
+  .work-media{position:relative; aspect-ratio:4/3; background:var(--paper-dim); display:flex; align-items:center; justify-content:center; overflow:hidden;}
+  .work-media img{width:100%; height:100%; object-fit:cover;}
+  .work-media video{width:100%; height:100%; object-fit:cover;}
+  .work-media .type-badge{position:absolute; top:10px; left:10px; font-family:var(--mono); font-size:10px; padding:3px 10px; border-radius:100px; background:rgba(27,36,28,0.75); color:#fff;}
+  .work-body{padding:14px 16px; flex:1; display:flex; flex-direction:column;}
+  .work-title{font-size:14.5px; font-weight:800; line-height:1.4;}
+  .work-desc{font-size:12.5px; color:rgba(27,36,28,0.6); margin-top:6px; line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .work-foot{display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-size:13px;}
+  .work-actions{display:flex; gap:14px; align-items:center;}
+  .like-btn{border:none; background:none; cursor:pointer; font-size:13px; display:flex; gap:5px; align-items:center; color:rgba(27,36,28,0.6); transition:.15s; padding:4px 6px; border-radius:8px;}
+  .like-btn:hover{background:rgba(185,134,59,0.12);}
+  .like-btn.liked{color:#e0524d; font-weight:700;}
+  .cmt-btn{border:none; background:none; cursor:pointer; font-size:13px; color:rgba(27,36,28,0.6); padding:4px 6px; border-radius:8px;}
+  .cmt-btn:hover{background:rgba(63,85,65,0.08);}
+  .del-btn{border:none; background:none; cursor:pointer; font-size:12px; color:rgba(224,82,77,0.7); padding:4px 6px; border-radius:8px;}
+  .del-btn:hover{background:rgba(224,82,77,0.1); color:#e0524d;}
+  .work-empty{grid-column:1/-1; text-align:center; padding:60px 20px; color:rgba(27,36,28,0.45); border:1px dashed var(--line); border-radius:14px;}
+
+  /* 弹窗 */
+  .modal-mask{position:fixed; inset:0; background:rgba(20,30,22,0.55); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px;}
+  .modal{background:#fff; border-radius:18px; width:100%; max-width:560px; max-height:88vh; overflow-y:auto; padding:28px;}
+  .modal h3{font-size:18px; margin-bottom:16px;}
+  .modal .close-x{float:right; cursor:pointer; font-size:20px; color:rgba(27,36,28,0.5);}
+  label{display:block; font-size:13px; font-weight:700; margin:14px 0 6px;}
+  .hint{font-size:11.5px; color:rgba(27,36,28,0.45); font-weight:400; margin-left:6px;}
+  input[type=text], input[type=file], textarea{width:100%; border:1px solid var(--line); border-radius:8px; padding:11px 13px; font-family:var(--sans); font-size:14px; background:var(--paper); color:var(--ink);}
+  textarea{resize:vertical; min-height:80px;}
+  .form-actions{display:flex; gap:10px; margin-top:20px; justify-content:flex-end;}
+  .toast{position:fixed; top:20px; left:50%; transform:translateX(-50%); background:var(--forest-deep); color:var(--paper); padding:10px 22px; border-radius:100px; font-size:13.5px; z-index:300; opacity:0; transition:opacity .3s; pointer-events:none;}
+  .toast.show{opacity:1;}
+  .hidden{display:none !important;}
+
+  /* 评论 */
+  .cmt-list{margin-top:10px; max-height:220px; overflow-y:auto; font-size:13px;}
+  .cmt-item{padding:8px 0; border-bottom:1px solid rgba(27,36,28,0.07);}
+  .cmt-item:last-child{border-bottom:none;}
+  .cmt-user{font-weight:700; font-size:12.5px; color:var(--forest);}
+  .cmt-time{font-size:11px; color:rgba(27,36,28,0.4); margin-left:8px;}
+  .cmt-text{margin-top:2px; color:rgba(27,36,28,0.8); white-space:pre-wrap; word-break:break-word;}
+  .cmt-input-row{display:flex; gap:8px; margin-top:12px;}
+  .cmt-input-row input{flex:1;}
+  .cmt-input-row button{flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="brand" href="/">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#F2F1E7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span><span class="brand-name">"创智算"数字科技协会</span><br><span class="brand-sub">CHUANGZHISUAN . CLUB</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="/#about">关于我们</a>
+      <a href="/#fields">前沿领域</a>
+      <a href="/#competitions">竞赛中心</a>
+      <a href="/#team">组队大厅</a>
+    </div>
+    <div class="auth-slot" id="authSlot"></div>
+  </nav>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <span class="sec-eyebrow">// PROFILE</span>
+    <h1 class="page-title">个人主页</h1>
+  </div>
+
+  <!-- 资料卡 -->
+  <div class="profile-card">
+    <div class="profile-avatar" id="profileAvatar" style="display:flex; align-items:center; justify-content:center; background:var(--forest-deep); color:#F2F1E7; font-size:34px; font-weight:800; overflow:hidden;">?</div>
+    <div class="profile-info">
+      <div class="profile-name">
+        <span id="profileName">—</span>
+        <span class="profile-username" id="profileUsername">@—</span>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><b id="statWorks">0</b> <span>作品</span></div>
+        <div class="stat"><b id="statLikes">0</b> <span>获赞</span></div>
+      </div>
+    </div>
+    <div class="profile-actions">
+      <button class="btn" id="btnEditName">修改昵称</button>
+      <button class="btn" id="btnEditAvatar">更换头像</button>
+      <button class="btn solid" id="btnShowUpload">发布作品</button>
+    </div>
+  </div>
+
+  <!-- 作品区 -->
+  <div class="works-head">
+    <div class="works-title">作品展示</div>
+    <span style="font-size:12px;color:rgba(27,36,28,0.5);">上传视频 / 图片展示你的项目，其他人可以点赞评论</span>
+  </div>
+  <div class="works-grid" id="worksGrid"></div>
+</div>
+
+<!-- 发布作品弹窗 -->
+<div class="modal-mask hidden" id="uploadModal">
+  <div class="modal">
+    <span class="close-x" id="uploadClose">×</span>
+    <h3>发布作品</h3>
+    <label>作品类型 <span class="hint">视频 ≤50MB · 图片 ≤5MB</span></label>
+    <div style="display:flex; gap:8px;">
+      <button class="btn" id="tabImage" style="flex:1;">🖼 图片</button>
+      <button class="btn" id="tabVideo" style="flex:1;">🎬 视频</button>
+    </div>
+    <div id="uploadBody">
+      <label>选择文件</label>
+      <input type="file" id="uploadFile" accept="image/png,image/jpeg,image/webp">
+      <label>作品标题 *</label>
+      <input type="text" id="uploadTitle" maxlength="50" placeholder="给作品起个名字">
+      <label>作品简介 <span class="hint">选填</span></label>
+      <textarea id="uploadDesc" maxlength="300" placeholder="一句话介绍你的项目"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn" id="uploadCancel">取消</button>
+      <button class="btn solid" id="uploadSubmit">发布</button>
+    </div>
+  </div>
+</div>
+
+<!-- 修改昵称弹窗 -->
+<div class="modal-mask hidden" id="nameModal">
+  <div class="modal" style="max-width:420px;">
+    <span class="close-x" id="nameClose">×</span>
+    <h3>修改昵称</h3>
+    <label>新昵称</label>
+    <input type="text" id="nameInput" maxlength="20" placeholder="输入新昵称">
+    <div class="form-actions">
+      <button class="btn" id="nameCancel">取消</button>
+      <button class="btn solid" id="nameSubmit">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 评论弹窗 -->
+<div class="modal-mask hidden" id="cmtModal">
+  <div class="modal" style="max-width:480px;">
+    <span class="close-x" id="cmtClose">×</span>
+    <h3 id="cmtTitle">评论</h3>
+    <div class="cmt-list" id="cmtList"></div>
+    <div class="cmt-input-row">
+      <input type="text" id="cmtInput" maxlength="200" placeholder="写条评论...">
+      <button class="btn solid" id="cmtSend">发送</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/auth-ui.js?v=2"></script>
+<script src="js/pay-gate.js"></script>
+<script>
+(function(){
+  var myUser = null; // 当前登录用户
+  var isSelf = true; // 是否看自己主页（本页默认自己）
+  var worksData = [];
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2200); }
+
+  function renderAvatar(el, avatar, name){
+    // 有图片头像 → 显示图片；否则显示"昵称首字"圆形头像
+    el.innerHTML = '';
+    if(avatar){
+      var inner = document.createElement('img');
+      inner.src = avatar;
+      inner.style.width = '100%';
+      inner.style.height = '100%';
+      inner.style.borderRadius = '50%';
+      inner.style.objectFit = 'cover';
+      inner.style.display = 'block';
+      el.appendChild(inner);
+    } else {
+      var ch = (name || '?').trim().charAt(0) || '?';
+      el.textContent = ch;
+      el.style.background = 'var(--forest-deep)';
+      el.style.color = '#F2F1E7';
+    }
+  }
+
+  var viewUser = new URLSearchParams(location.search).get('username'); // 查看的用户
+  if(viewUser) isSelf = false; // 有 username 参数默认他人，若与登录用户相同则初始化时改回本人
+
+  function loadProfile(){
+    var q = viewUser ? ('?username=' + encodeURIComponent(viewUser)) : '';
+    fetch('/api/profile' + q, { credentials: 'same-origin' })
+      .then(r=>r.json())
+      .then(d=>{
+        if(!d || !d.ok) return;
+        var p = d.profile;
+        document.getElementById('profileName').textContent = p.name || p.username;
+        document.getElementById('profileUsername').textContent = '@' + p.username;
+        renderAvatar(document.getElementById('profileAvatar'), p.avatar, p.name || p.username);
+        document.getElementById('statWorks').textContent = d.stats.works;
+        document.getElementById('statLikes').textContent = d.stats.likes;
+        // 非本人：隐藏编辑/发布按钮
+        ['btnEditName','btnEditAvatar','btnShowUpload'].forEach(function(id){
+          document.getElementById(id).style.display = isSelf ? '' : 'none';
+        });
+      });
+  }
+
+  function loadWorks(){
+    var q = viewUser ? ('?username=' + encodeURIComponent(viewUser)) : '';
+    fetch('/api/works' + q, { credentials: 'same-origin' })
+      .then(r=>r.json())
+      .then(d=>{
+        if(!d || !d.ok) return;
+        worksData = d.works || [];
+        renderWorks();
+      });
+  }
+
+  function renderWorks(){
+    var grid = document.getElementById('worksGrid');
+    if(!worksData.length){
+      grid.innerHTML = '<div class="work-empty">还没有作品，点击右上角「发布作品」分享你的项目吧~</div>';
+      return;
+    }
+    grid.innerHTML = worksData.map(function(w){
+      var media = w.type === 'video'
+        ? '<video controls preload="metadata" src="/media/' + esc(w.content) + '"></video><span class="type-badge">视频</span>'
+        : '<img src="/media/' + esc(w.content) + '" alt="' + esc(w.title) + '" loading="lazy"><span class="type-badge">图片</span>';
+      return '<div class="work-card" data-id="' + w.id + '">' +
+        '<div class="work-media">' + media + '</div>' +
+        '<div class="work-body">' +
+          '<div class="work-title">' + esc(w.title) + '</div>' +
+          (w.description ? '<div class="work-desc">' + esc(w.description) + '</div>' : '') +
+          '<div class="work-foot">' +
+            '<div class="work-actions">' +
+              '<button class="like-btn' + (w.liked ? ' liked' : '') + '" data-like="' + w.id + '">' + (w.liked ? '♥' : '♡') + ' <span>' + w.like_count + '</span></button>' +
+              '<button class="cmt-btn" data-cmt="' + w.id + '">💬 <span>' + w.comment_count + '</span></button>' +
+            '</div>' +
+            (isSelf ? '<button class="del-btn" data-del="' + w.id + '">删除</button>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // 点赞
+  document.getElementById('worksGrid').addEventListener('click', function(e){
+    var likeBtn = e.target.closest('[data-like]');
+    var delBtn = e.target.closest('[data-del]');
+    var cmtBtn = e.target.closest('[data-cmt]');
+    if(likeBtn){
+      var id = likeBtn.getAttribute('data-like');
+      fetch('/api/work/like', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ workId: Number(id) }) })
+        .then(r=>r.json()).then(function(d){
+          if(d.ok){
+            var w = worksData.find(x=>x.id==id);
+            if(w){ w.liked = d.liked; w.like_count += d.liked ? 1 : -1; }
+            renderWorks();
+          }
+        });
+    } else if(delBtn){
+      if(!confirm('确定删除该作品？')) return;
+      var did = delBtn.getAttribute('data-del');
+      fetch('/api/work?id=' + did, { method:'DELETE', credentials:'same-origin' })
+        .then(r=>r.json()).then(function(d){
+          if(d.ok){ toast('已删除'); loadWorks(); loadProfile(); }
+          else { toast(d.msg || '删除失败'); }
+        });
+    } else if(cmtBtn){
+      var cid = cmtBtn.getAttribute('data-cmt');
+      openComments(cid);
+    }
+  });
+
+  // 评论
+  var cmtWorkId = null;
+  function openComments(workId){
+    cmtWorkId = workId;
+    var w = worksData.find(x=>x.id==workId);
+    document.getElementById('cmtTitle').textContent = '评论 · ' + (w ? w.title : '');
+    loadComments(workId);
+    document.getElementById('cmtModal').classList.remove('hidden');
+  }
+  function loadComments(workId){
+    fetch('/api/work/comments?workId=' + workId, { credentials:'same-origin' })
+      .then(r=>r.json()).then(function(d){
+        var list = document.getElementById('cmtList');
+        if(!d || !d.comments || !d.comments.length){
+          list.innerHTML = '<div style="color:rgba(27,36,28,.45); padding:10px 0;">还没有评论，来抢沙发~</div>';
+          return;
+        }
+        list.innerHTML = d.comments.map(function(c){
+          return '<div class="cmt-item"><span class="cmt-user">' + esc(c.user_name || c.username) + '</span><span class="cmt-time">' + esc((c.created_at||'').slice(0,10)) + '</span><div class="cmt-text">' + esc(c.content) + '</div></div>';
+        }).join('');
+      });
+  }
+  document.getElementById('cmtSend').addEventListener('click', function(){
+    var val = document.getElementById('cmtInput').value.trim();
+    if(!val) return;
+    fetch('/api/work/comment', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ workId: cmtWorkId, content: val }) })
+      .then(r=>r.json()).then(function(d){
+        if(d.ok){
+          document.getElementById('cmtInput').value = '';
+          loadComments(cmtWorkId);
+          var w = worksData.find(x=>x.id==cmtWorkId);
+          if(w) w.comment_count++;
+          renderWorks();
+        } else { toast(d.msg || '评论失败'); }
+      });
+  });
+
+  // 修改昵称
+  document.getElementById('btnEditName').addEventListener('click', function(){
+    document.getElementById('nameInput').value = window.__czsMe && window.__czsMe.name ? window.__czsMe.name : '';
+    document.getElementById('nameModal').classList.remove('hidden');
+  });
+  document.getElementById('nameSubmit').addEventListener('click', function(){
+    var n = document.getElementById('nameInput').value.trim();
+    if(!n){ toast('昵称不能为空'); return; }
+    fetch('/api/profile/name', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ name: n }) })
+      .then(r=>r.json()).then(function(d){
+        if(d.ok){ toast('昵称已更新'); document.getElementById('nameModal').classList.add('hidden'); loadProfile(); if(window.__czsRefreshAuth) window.__czsRefreshAuth(); }
+        else toast(d.msg || '保存失败');
+      });
+  });
+
+  // 更换头像（复用现有 /api/avatar）
+  document.getElementById('btnEditAvatar').addEventListener('click', function(){
+    var input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/png,image/jpeg,image/webp';
+    input.addEventListener('change', function(){
+      var f = input.files && input.files[0];
+      if(!f) return;
+      var reader = new FileReader();
+      reader.onload = function(){
+        fetch('/api/avatar', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ avatar: String(reader.result) }) })
+          .then(r=>r.json()).then(function(d){
+            if(d && d.ok){ toast('头像已更新'); loadProfile(); if(window.__czsRefreshAuth) window.__czsRefreshAuth(); }
+            else toast((d && d.msg) || '上传失败');
+          });
+      };
+      reader.readAsDataURL(f);
+    });
+    input.click();
+  });
+
+  // 发布作品弹窗
+  var uploadType = 'image';
+  document.getElementById('btnShowUpload').addEventListener('click', function(){
+    document.getElementById('uploadModal').classList.remove('hidden');
+    document.getElementById('uploadFile').accept = 'image/png,image/jpeg,image/webp';
+    setUploadTab('image');
+  });
+  function setUploadTab(t){
+    uploadType = t;
+    document.getElementById('tabImage').classList.toggle('solid', t==='image');
+    document.getElementById('tabVideo').classList.toggle('solid', t==='video');
+    document.getElementById('uploadFile').accept = t==='image' ? 'image/png,image/jpeg,image/webp' : 'video/mp4,video/webm,video/quicktime';
+  }
+  document.getElementById('tabImage').addEventListener('click', function(){ setUploadTab('image'); });
+  document.getElementById('tabVideo').addEventListener('click', function(){ setUploadTab('video'); });
+  document.getElementById('uploadSubmit').addEventListener('click', function(){
+    var file = document.getElementById('uploadFile').files[0];
+    var title = document.getElementById('uploadTitle').value.trim();
+    var desc = document.getElementById('uploadDesc').value.trim();
+    if(!title){ toast('请填写作品标题'); return; }
+    if(!file){ toast('请选择文件'); return; }
+
+    if(uploadType === 'image'){
+      if(file.size > 5*1024*1024){ toast('图片不能超过5MB'); return; }
+      var reader = new FileReader();
+      reader.onload = function(){
+        fetch('/api/work/create', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({ title: title, description: desc, image: String(reader.result) }) })
+          .then(r=>r.json()).then(function(d){
+            if(d.ok){ toast('作品发布成功!'); closeUpload(); loadWorks(); loadProfile(); }
+            else toast(d.msg || '发布失败');
+          });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      if(file.size > 50*1024*1024){ toast('视频不能超过50MB'); return; }
+      var ext = file.name.split('.').pop().toLowerCase();
+      fetch('/api/work/video?title=' + encodeURIComponent(title) + '&desc=' + encodeURIComponent(desc) + '&ext=' + ext, {
+        method:'POST', headers:{ 'Content-Type':'application/octet-stream' }, credentials:'same-origin', body: file
+      })
+        .then(r=>r.json()).then(function(d){
+          if(d.ok){ toast('作品发布成功!'); closeUpload(); loadWorks(); loadProfile(); }
+          else toast(d.msg || '发布失败');
+        });
+    }
+  });
+  function closeUpload(){
+    document.getElementById('uploadModal').classList.add('hidden');
+    document.getElementById('uploadTitle').value = '';
+    document.getElementById('uploadDesc').value = '';
+    document.getElementById('uploadFile').value = '';
+  }
+  document.getElementById('uploadClose').addEventListener('click', closeUpload);
+  document.getElementById('uploadCancel').addEventListener('click', closeUpload);
+
+  // 关闭弹窗通用
+  document.getElementById('nameClose').addEventListener('click', ()=> document.getElementById('nameModal').classList.add('hidden'));
+  document.getElementById('nameCancel').addEventListener('click', ()=> document.getElementById('nameModal').classList.add('hidden'));
+  document.getElementById('cmtClose').addEventListener('click', ()=> document.getElementById('cmtModal').classList.add('hidden'));
+  [nameModal, cmtModal, uploadModal].forEach(function(m){
+    m.addEventListener('click', function(e){ if(e.target === m) m.classList.add('hidden'); });
+  });
+
+  // 初始加载：优先复用 auth-ui 已缓存的 window.__czsMe（免二次 /api/me 请求）；
+  // 若尚未就绪则直接请求（更快），随后并行加载资料+作品
+  function enter(me){
+    myUser = me;
+    if(!me || !me.ok){ location.href = '/login.html'; return; }
+    window.__czsMe = me; // 供组件复用
+    // 关键：点击自己头像（?username=自己）→ 也视为本人（显示编辑按钮）
+    if(viewUser && me.username === viewUser) isSelf = true;
+    loadProfile();
+    loadWorks();
+  }
+  function boot(){
+    if(window.__czsMe){ // auth-ui 的 /api/me 已返回（无论成败）
+      if(window.__czsMe.ok) enter(window.__czsMe);
+      else location.href = '/login.html';
+      return;
+    }
+    // 自行请求 /api/me（与 auth-ui 并行，谁先到都行；此处确保尽快进入）
+    fetch('/api/me', { credentials: 'same-origin' })
+      .then(function(r){ return r.ok ? r.json() : { ok: false }; })
+      .then(function(m){ enter(m); })
+      .catch(function(){ location.href = '/login.html'; });
+  }
+  boot();
+  // 兜底：若 boot 时 __czsMe 尚未设置，等待 auth-ui 完成后补触发（幂等）
+  (function(){
+    var tries = 0;
+    var t = setInterval(function(){
+      tries++;
+      if(window.__czsMe){
+        clearInterval(t);
+        if(!myUser && window.__czsMe.ok) enter(window.__czsMe);
+        else if(!myUser && !window.__czsMe.ok) location.href='/login.html';
+      } else if(tries > 20){
+        clearInterval(t);
+        if(!myUser) location.href = '/login.html';
+      }
+    }, 200);
+  })();
+})();
+</script>
+</body>
+</html>

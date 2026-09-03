@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="logo.png">
+<title>缴费审核 · 管理员 · 创智算</title>
+<style>
+  :root{
+    --ink:#1B241C; --forest:#3F5541; --forest-deep:#2C3B2E;
+    --paper:#F2F1E7; --paper-dim:#E9E7D9; --copper:#B9863B; --signal:#6EE7A8;
+    --line:rgba(27,36,28,0.14);
+    --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(242,241,231,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 32px; max-width:1100px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:12px; font-weight:700; font-size:15px;}
+  .brand .tag{font-family:var(--mono); font-size:10px; color:var(--paper); background:var(--copper); padding:2px 9px; border-radius:100px; letter-spacing:0.06em;}
+  .nav-links{display:flex; gap:24px; font-size:13.5px;}
+  .nav-links a{opacity:0.75;} .nav-links a:hover{opacity:1;}
+  @media(max-width:640px){.nav-links{display:none;}}
+
+  .page-head{padding:32px 0 10px;}
+  .sec-eyebrow{font-family:var(--mono); font-size:12px; color:var(--copper); letter-spacing:0.1em; margin-bottom:10px; display:block;}
+  h1{font-size:clamp(24px,3.4vw,32px); font-weight:800; margin-bottom:8px;}
+  .desc{font-size:13.5px; color:rgba(27,36,28,0.6); margin-bottom:22px;}
+
+  .toolbar{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:18px;}
+  .toolbar .count{font-family:var(--mono); font-size:12.5px; color:rgba(27,36,28,0.55);}
+  .refresh-btn{font-family:var(--mono); font-size:12px; background:var(--forest-deep); color:var(--paper); border:none; padding:8px 16px; border-radius:100px; cursor:pointer;}
+
+  .sec-title{font-size:16px; font-weight:800; margin:22px 0 12px; display:flex; align-items:center; gap:8px;}
+  .sec-title::before{content:'//'; color:var(--copper); font-family:var(--mono); font-size:13px;}
+  .sec-title .n{font-family:var(--mono); font-size:11px; color:var(--copper); background:rgba(185,134,59,0.12); padding:2px 9px; border-radius:100px;}
+
+  .proof-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  @media(max-width:760px){.proof-grid{grid-template-columns:1fr;}}
+  .proof-card{border:1px solid var(--line); border-radius:16px; background:#fff; padding:18px; display:flex; gap:16px; align-items:flex-start;}
+  .proof-img{width:120px; height:160px; object-fit:cover; border:1px solid var(--line); border-radius:10px; flex-shrink:0; cursor:zoom-in;}
+  .proof-info{flex:1; min-width:0;}
+  .proof-user{font-size:14.5px; font-weight:800; margin-bottom:3px;}
+  .proof-meta{font-size:12px; color:rgba(27,36,28,0.55); margin-bottom:10px; line-height:1.7;}
+  .proof-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .btn-ok{background:var(--forest-deep); color:var(--paper); border:none; padding:8px 18px; border-radius:100px; font-size:13px; font-weight:700; cursor:pointer;}
+  .btn-ok:hover{transform:translateY(-1px);}
+  .btn-no{border:1px solid rgba(185,90,60,0.5); color:#9c4a2f; background:transparent; padding:8px 18px; border-radius:100px; font-size:13px; cursor:pointer;}
+  .btn-no:hover{background:rgba(185,90,60,0.08);}
+
+  .hist-list{display:flex; flex-direction:column; gap:0; border:1px solid var(--line); border-radius:14px; background:#fff; overflow:hidden;}
+  .hist-row{display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); font-size:13px;}
+  .hist-row:last-child{border-bottom:none;}
+  .hist-row .st{font-family:var(--mono); font-size:10px; padding:2px 9px; border-radius:100px; flex-shrink:0;}
+  .st-APPROVED{color:var(--forest); border:1px solid rgba(63,85,65,0.4);}
+  .st-REJECTED{color:#9c4a2f; border:1px solid rgba(185,90,60,0.4);}
+  .hist-row .who{font-weight:700;}
+
+  .empty-box{text-align:center; padding:48px 20px; border:1px dashed var(--line); border-radius:16px; color:rgba(27,36,28,0.5); font-size:13.5px;}
+  .deny-box{text-align:center; padding:80px 20px;}
+  .deny-box b{display:block; font-size:17px; margin-bottom:8px;}
+
+  /* 大图预览 */
+  .zoom-mask{position:fixed; inset:0; z-index:999; background:rgba(20,30,22,0.85); display:flex; align-items:center; justify-content:center; cursor:zoom-out; padding:20px;}
+  .zoom-mask img{max-width:92vw; max-height:92vh; border-radius:10px; box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="brand" href="index.html">"创智算"数字科技协会 <span class="tag">ADMIN</span></a>
+    <div class="nav-links">
+      <a href="index.html">返回首页</a>
+    </div>
+    <span class="auth-slot" id="authSlot"></span>
+  </nav>
+</header>
+
+<div class="wrap" id="adminRoot">
+  <div class="page-head">
+    <span class="sec-eyebrow">// 缴费凭证审核</span>
+    <h1>管理员后台</h1>
+    <p class="desc">核对用户提交的微信付款截图与你的微信收款账单（金额 ¥20），确认收款后点击"通过"，用户即可解锁网站全部内容。还可在此发布"校级 / 协会内部竞赛通知"（仅管理员可发）。</p>
+  </div>
+
+  <div class="toolbar"><div class="count">协会内部竞赛通知</div></div>
+  <div class="sec-title" style="margin-top:0;">发布校级 / 协会内部竞赛通知</div>
+  <div class="proof-card" style="margin-bottom:20px; flex-direction:column; gap:12px; margin-top:10px;">
+    <div class="row-2">
+      <div><label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">竞赛名称 *</label><input type="text" id="icName" placeholder="如：校级 · 物联网创新应用大赛 / 协会内部 · 嵌入式创意赛" maxlength="120" style="width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13.5px; background:var(--paper);"></div>
+      <div><label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">级别</label><select id="icLevel" style="width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13.5px; background:var(--paper);"><option value="school">校级</option><option value="club">社团内部</option></select></div>
+    </div>
+    <div class="row-2">
+      <div><label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">报名截止</label><input type="date" id="icDeadline" style="width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13.5px; background:var(--paper);"></div>
+      <div><label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">举办时间</label><input type="date" id="icDate" style="width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13.5px; background:var(--paper);"></div>
+    </div>
+    <div class="row-2">
+      <div><label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">地点</label><input type="text" id="icLocation" placeholder="如：协会活动室 / 线上" maxlength="80" style="width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13.5px; background:var(--paper);"></div>
+      <div><label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">技术方向</label><select id="icTech" style="width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13.5px; background:var(--paper);"><option value="">不限方向</option><option value="code">软件开发</option><option value="embedded">嵌入式</option><option value="embodied">具身智能</option></select></div>
+    </div>
+    <div><label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">技能标签（逗号分隔）</label><input type="text" id="icSkills" placeholder="如：嵌入式开发, 硬件调试" style="width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13.5px; background:var(--paper);"></div>
+    <div><label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">赛事说明</label><textarea id="icDesc" maxlength="2000" placeholder="介绍赛事内容、参赛对象、奖项等" style="width:100%; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13.5px; background:var(--paper); min-height:70px;"></textarea></div>
+    <button class="btn-ok" id="icSubmit" style="align-self:flex-start;">发布通知</button>
+  </div>
+  <div id="icList" class="hist-list" style="margin-bottom:28px;"></div>
+
+  <div id="adminBody"></div>
+</div>
+
+<script src="js/auth-ui.js?v=2"></script>
+<script>
+(function(){
+  const body = document.getElementById('adminBody');
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function el(tag, cls, text){
+    const e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+
+  let data = { pending: [], history: [] };
+
+  function render(){
+    body.innerHTML = '';
+
+    if(data.denied){
+      const box = el('div', 'deny-box');
+      box.append(el('b','', '无权限'), el('p','', '当前账号不是管理员，请使用管理员账号登录。'));
+      body.append(box);
+      return;
+    }
+
+    const toolbar = el('div', 'toolbar');
+    toolbar.append(el('span','count', '待审核 ' + data.pending.length + ' 单 · 最近更新 ' + new Date().toLocaleTimeString()));
+    const refresh = el('button','refresh-btn','刷新列表');
+    refresh.addEventListener('click', load);
+    toolbar.append(refresh);
+    body.append(toolbar);
+
+    // 待审核
+    const t1 = el('div', 'sec-title');
+    t1.append(document.createTextNode('待审核凭证'), el('span','n', String(data.pending.length)));
+    body.append(t1);
+
+    if(!data.pending.length){
+      body.append(el('div','empty-box','暂无待审核的缴费凭证。用户提交后会实时出现在这里。'));
+    } else {
+      const grid = el('div', 'proof-grid');
+      data.pending.forEach(p => {
+        const card = el('div', 'proof-card');
+        const img = el('img', 'proof-img');
+        img.src = p.image;
+        img.alt = '付款截图';
+        img.addEventListener('click', () => {
+          const mask = document.createElement('div');
+          mask.className = 'zoom-mask';
+          const big = document.createElement('img');
+          big.src = p.image;
+          mask.append(big);
+          mask.addEventListener('click', () => mask.remove());
+          document.body.append(mask);
+        });
+        const info = el('div', 'proof-info');
+        info.append(
+          el('div','proof-user', (p.name || p.username) + '（' + p.username + '）'),
+          el('div','proof-meta', '学号：' + (p.student_id || '—') + ' · 学院：' + (p.college || '—') + '\n提交时间：' + (p.created_at || '').replace('T',' ').slice(0,16)),
+        );
+        const actions = el('div', 'proof-actions');
+        const ok = el('button','btn-ok','✓ 通过（已收款 ¥20）');
+        ok.addEventListener('click', () => review(p.id, 'approve'));
+        const no = el('button','btn-no','驳回');
+        no.addEventListener('click', () => {
+          const reason = prompt('请输入驳回原因（用户将看到）：', '凭证无效，请重新提交');
+          if(reason !== null) review(p.id, 'reject', reason);
+        });
+        actions.append(ok, no);
+        info.append(actions);
+        card.append(img, info);
+        grid.append(card);
+      });
+      body.append(grid);
+    }
+
+    // 审核历史
+    const t2 = el('div', 'sec-title');
+    t2.append(document.createTextNode('最近审核记录'), el('span','n', String(data.history.length)));
+    body.append(t2);
+    if(!data.history.length){
+      body.append(el('div','empty-box','暂无审核记录。'));
+    } else {
+      const list = el('div', 'hist-list');
+      data.history.forEach(h => {
+        const row = el('div', 'hist-row');
+        row.append(
+          el('span','st st-' + h.status, h.status === 'APPROVED' ? '已通过' : '已驳回'),
+          el('span','who', h.name || h.username),
+          el('span','', h.status === 'REJECTED' && h.note ? '（原因：' + h.note + '）' : ''),
+        );
+        list.append(row);
+      });
+      body.append(list);
+    }
+  }
+
+  async function review(id, action, note){
+    try{
+      const r = await fetch('/api/admin/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ proofId: id, action, note }),
+      });
+      const d = await r.json();
+      if(d && d.ok){ load(); } else { alert(d && d.msg ? d.msg : '操作失败'); }
+    }catch(e){ alert('网络错误'); }
+  }
+
+  async function load(){
+    try{
+      const r = await fetch('/api/admin/proofs', { credentials: 'same-origin' });
+      if(r.status === 403){ data = { denied: true, pending: [], history: [] }; render(); return; }
+      data = await r.json();
+      render();
+    }catch(e){
+      body.innerHTML = '<div class="empty-box">加载失败，请刷新页面。</div>';
+    }
+  }
+
+  load();
+  setInterval(load, 15000); // 每 15 秒自动刷新
+
+  /* ---- 协会内部竞赛通知（仅管理员发布） ---- */
+  const icList = document.getElementById('icList');
+  function loadInternal(){
+    fetch('/api/competitions/internal', { credentials:'same-origin' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        const comps = (d && d.competitions) || [];
+        if(!comps.length){ icList.innerHTML = '<div class="empty-box" style="padding:16px;">暂未发布协会内部竞赛。</div>'; return; }
+        icList.innerHTML = comps.map(function(c){
+          const lvl = c.level === 'school' ? '校级' : '社团内部';
+          return '<div class="hist-row"><span class="st st-APPROVED">' + lvl + '</span><span class="who">' + esc(c.name) + '</span>' +
+            '<span style="flex:1;"></span>' +
+            '<span style="font-size:11px; color:rgba(27,36,28,0.5);">报名截止 ' + (c.deadline || '—') + '</span>' +
+            '<button class="btn-no" data-del="' + c.id + '" style="padding:4px 12px; font-size:12px;">删除</button></div>';
+        }).join('');
+        icList.querySelectorAll('[data-del]').forEach(function(b){
+          b.addEventListener('click', function(){
+            if(!confirm('确定删除该竞赛通知？')) return;
+            fetch('/api/admin/competition?id=' + b.getAttribute('data-del'), { method:'DELETE', credentials:'same-origin' })
+              .then(function(){ loadInternal(); })
+              .catch(function(){});
+          });
+        });
+      })
+      .catch(function(){});
+  }
+  document.getElementById('icSubmit').addEventListener('click', function(){
+    const name = document.getElementById('icName').value.trim();
+    if(!name){ alert('请填写竞赛名称'); return; }
+    fetch('/api/admin/competition', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
+      body: JSON.stringify({
+        name,
+        level: document.getElementById('icLevel').value,
+        deadline: document.getElementById('icDeadline').value,
+        date: document.getElementById('icDate').value,
+        location: document.getElementById('icLocation').value,
+        tech: document.getElementById('icTech').value,
+        skills: document.getElementById('icSkills').value,
+        description: document.getElementById('icDesc').value,
+      }),
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.ok){
+          document.getElementById('icName').value = '';
+          document.getElementById('icDesc').value = '';
+          loadInternal();
+          alert('协会内部竞赛已发布到首页竞赛中心（社团内部分类）');
+        } else {
+          alert(d && d.msg ? d.msg : '发布失败');
+        }
+      })
+      .catch(function(){ alert('网络错误'); });
+  });
+  loadInternal();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,470 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="logo.png">
+<title>竞赛详情 · 创智算</title>
+<style>
+  :root{
+    --ink:#1B241C; --forest:#3F5541; --forest-deep:#2C3B2E;
+    --paper:#F2F1E7; --paper-dim:#E9E7D9; --copper:#B9863B; --signal:#6EE7A8;
+    --line:rgba(27,36,28,0.14);
+    --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(242,241,231,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 32px; max-width:1180px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{width:38px; height:38px; border-radius:50%; background:var(--forest-deep); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .brand-mark svg{width:24px; height:24px;}
+  .brand-name{font-weight:700; font-size:15px;}
+  .brand-sub{font-family:var(--mono); font-size:10px; color:var(--forest); letter-spacing:0.08em;}
+  .nav-links{display:flex; gap:36px; font-size:14px; font-weight:500;}
+  .nav-links a{opacity:0.75;}
+  .nav-links a:hover{opacity:1;}
+  .nav-cta{font-family:var(--mono); font-size:12px; background:var(--forest-deep); color:var(--paper); padding:9px 18px; border-radius:100px; display:flex; align-items:center; gap:6px;}
+  .nav-cta::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal);}
+  @media(max-width:860px){.nav-links{display:none;}}
+
+  .btn-primary, .btn-ghost{padding:13px 26px; border-radius:100px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px; transition:transform .2s, box-shadow .2s;}
+  .btn-primary{background:var(--forest-deep); color:var(--paper);}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(44,59,46,0.25);}
+  .btn-ghost{border:1.5px solid var(--ink); color:var(--ink); background:transparent;}
+  .btn-ghost:hover{transform:translateY(-2px);}
+
+  .breadcrumb{font-family:var(--mono); font-size:12px; color:rgba(27,36,28,0.5); padding:28px 0 0; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .breadcrumb a{opacity:0.7;} .breadcrumb a:hover{opacity:1; color:var(--forest);}
+  .breadcrumb .sep{opacity:0.4;}
+  .breadcrumb .current{color:var(--ink); opacity:0.9;}
+
+  .detail-head{padding:28px 0 40px; border-bottom:1px solid var(--line);}
+  .level-badge{font-family:var(--mono); font-size:10px; padding:4px 9px; border-radius:6px; letter-spacing:0.04em; display:inline-block; margin-bottom:18px;}
+  .level-a{background:rgba(63,85,65,0.12); color:var(--forest);}
+  .level-b{background:rgba(185,134,59,0.14); color:var(--copper);}
+  .level-c{background:rgba(27,36,28,0.08); color:var(--ink); opacity:0.7;}
+  .level-d{background:rgba(110,231,168,0.16); color:var(--forest-deep); border:1px dashed rgba(63,85,65,0.5);}
+  .detail-title{font-size:clamp(26px,4vw,40px); font-weight:800; max-width:760px; margin-bottom:14px;}
+  .detail-sub{color:rgba(27,36,28,0.6); max-width:600px; font-size:15px; margin-bottom:22px;}
+  .sync-pill{
+    display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px;
+    color:var(--forest-deep); background:rgba(110,231,168,0.14); border:1px solid rgba(63,85,65,0.25);
+    padding:5px 12px; border-radius:100px; margin-bottom:22px;
+  }
+  .sync-pill .dot{width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal);}
+  .info-row{display:flex; gap:32px; flex-wrap:wrap; margin-bottom:28px;}
+  .info-label{font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.05em; margin-bottom:4px;}
+  .info-val{font-size:15px; font-weight:700;}
+  .head-cta{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+
+  .detail-body{display:grid; grid-template-columns:1.7fr 1fr; gap:56px; padding:56px 0 96px; align-items:start;}
+  @media(max-width:900px){.detail-body{grid-template-columns:1fr;}}
+
+  .block{margin-bottom:44px;}
+  .block h3{font-size:18px; font-weight:800; margin-bottom:14px; display:flex; align-items:center; gap:8px;}
+  .block h3::before{content:'//'; color:var(--copper); font-family:var(--mono); font-size:14px;}
+  .block p{font-size:14.5px; color:rgba(27,36,28,0.7); max-width:600px;}
+  .block p + p{margin-top:12px;}
+
+  .timeline{position:relative; padding-left:24px;}
+  .timeline::before{content:''; position:absolute; left:5px; top:6px; bottom:6px; width:1px; background:var(--line);}
+  .t-item{position:relative; padding-bottom:26px;}
+  .t-item:last-child{padding-bottom:0;}
+  .t-item::before{content:''; position:absolute; left:-24px; top:4px; width:10px; height:10px; border-radius:50%; background:var(--paper); border:2px solid var(--forest);}
+  .t-item.done::before{background:var(--signal); border-color:var(--signal); box-shadow:0 0 6px var(--signal);}
+  .t-item.ongoing::before{background:var(--copper); border-color:var(--copper); box-shadow:0 0 8px var(--copper); animation:tPulse 1.6s ease-in-out infinite;}
+  @keyframes tPulse{0%,100%{box-shadow:0 0 3px rgba(185,134,59,0.5);} 50%{box-shadow:0 0 12px rgba(185,134,59,0.9);}}
+  .t-date{font-family:var(--mono); font-size:11px; color:var(--forest); margin-bottom:3px; display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
+  .t-ongoing-tag{
+    font-family:var(--mono); font-size:9.5px; color:var(--copper);
+    border:1px solid var(--copper); border-radius:100px; padding:1px 7px; letter-spacing:0.04em;
+  }
+  .t-title{font-size:14.5px; font-weight:700;}
+  .t-legend{
+    display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px;
+    font-family:var(--mono); font-size:11px; color:rgba(27,36,28,0.5);
+  }
+  .t-legend span{display:inline-flex; align-items:center; gap:6px;}
+  .t-legend .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+  .t-legend .d-done{background:var(--signal); box-shadow:0 0 5px var(--signal);}
+  .t-legend .d-ongoing{background:var(--copper); box-shadow:0 0 5px var(--copper);}
+  .t-legend .d-upcoming{border:2px solid var(--forest);}
+
+  .req-list{list-style:none;}
+  .req-list li{font-size:14.5px; color:rgba(27,36,28,0.75); padding:10px 0; border-bottom:1px solid var(--line); display:flex; gap:10px;}
+  .req-list li::before{content:'—'; color:var(--copper); flex-shrink:0;}
+
+  .side-card{border:1px solid var(--line); border-radius:16px; padding:24px; background:#fff; margin-bottom:20px;}
+  .side-card h4{font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:0.06em; margin-bottom:16px;}
+  .side-row{display:flex; justify-content:space-between; gap:14px; font-size:13px; padding:9px 0; border-bottom:1px solid var(--line);}
+  .side-row:last-child{border-bottom:none;}
+  .side-row span:first-child{color:rgba(27,36,28,0.5); flex-shrink:0;}
+  .side-row span:last-child{text-align:right;}
+  .tag-list{display:flex; gap:6px; flex-wrap:wrap;}
+  .tag-list span{font-size:11.5px; background:var(--paper-dim); padding:5px 10px; border-radius:6px; color:var(--forest-deep);}
+
+  /* 官网链接卡 */
+  .site-card{border:1px solid rgba(63,85,65,0.35); background:rgba(63,85,65,0.05);}
+  .site-card .site-name{font-size:14px; font-weight:700; margin-bottom:6px;}
+  .site-card .site-url{
+    font-family:var(--mono); font-size:12px; color:var(--forest); word-break:break-all;
+    display:block; margin-bottom:14px; text-decoration:underline; text-underline-offset:3px;
+  }
+  .site-card .site-note{font-size:11.5px; color:rgba(27,36,28,0.55); line-height:1.6;}
+  .site-card .no-site{font-size:12.5px; color:rgba(27,36,28,0.55); line-height:1.7;}
+
+  /* 立项报销卡 */
+  .fund-card{background:rgba(185,134,59,0.06); border-color:rgba(185,134,59,0.35);}
+  .fund-amount{
+    display:flex; align-items:baseline; gap:8px; padding:4px 0 14px; margin-bottom:12px;
+    border-bottom:1px dashed rgba(185,134,59,0.4); flex-wrap:wrap;
+  }
+  .fund-amount .num{font-family:var(--mono); font-size:34px; font-weight:800; color:var(--copper);}
+  .fund-amount .unit{font-size:13px; color:rgba(27,36,28,0.55);}
+  .fund-amount .badge{font-family:var(--mono); font-size:10px; margin-left:auto; background:rgba(185,134,59,0.15); color:var(--copper); padding:3px 9px; border-radius:100px;}
+  .fund-list .f-row{display:flex; justify-content:space-between; gap:12px; font-size:12.5px; padding:7px 0; border-bottom:1px solid var(--line);}
+  .fund-list .f-row:last-child{border-bottom:none;}
+  .fund-list .f-row span:first-child{color:rgba(27,36,28,0.5); flex-shrink:0;}
+  .fund-list .f-row span:last-child{text-align:right; font-weight:600;}
+  .fund-src{font-size:11px; color:rgba(27,36,28,0.45); margin-top:12px; line-height:1.6;}
+  .fund-none{font-size:12.5px; color:rgba(27,36,28,0.55); line-height:1.7;}
+
+  .rel-team{display:block; padding:14px 0; border-bottom:1px solid var(--line);}
+  .rel-team:last-child{border-bottom:none;}
+  .rel-team:hover .rel-title{color:var(--forest);}
+  .rel-status{font-family:var(--mono); font-size:10px; color:var(--signal); margin-bottom:4px; display:flex; align-items:center; gap:5px;}
+  .rel-status .dot{width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 5px var(--signal);}
+  .rel-status.closed{color:rgba(27,36,28,0.4);}
+  .rel-status.closed .dot{background:rgba(27,36,28,0.3); box-shadow:none;}
+  .rel-title{font-size:13.5px; font-weight:700; transition:color .2s;}
+  .rel-meta{font-size:11.5px; color:rgba(27,36,28,0.5); margin-top:2px;}
+  .rel-empty{font-size:12.5px; color:rgba(27,36,28,0.45);}
+
+  footer{background:var(--ink); color:var(--paper); padding:56px 0 28px; margin-top:20px;}
+  .foot-bottom{display:flex; justify-content:space-between; font-size:12px; color:rgba(242,241,231,0.4); flex-wrap:wrap; gap:10px;}
+  .foot-bottom span{font-family:var(--mono);}
+  .foot-top{padding-bottom:32px; margin-bottom:24px; border-bottom:1px solid rgba(242,241,231,0.12); font-weight:700;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="brand" href="index.html">
+      <div class="brand-mark"><img src="logo.png" alt="创智算" style="width:100%; height:100%; border-radius:50%; display:block;"></div>
+      <div>
+        <div class="brand-name">"创智算"数字科技协会</div>
+        <div class="brand-sub">CHUANGZHISUAN.CLUB</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#about">关于我们</a>
+      <a href="index.html#fields">前沿领域</a>
+      <a href="index.html#competitions">竞赛中心</a>
+      <a href="index.html#team">组队大厅</a>
+    </div>
+    <span class="auth-slot" id="authSlot"></span>
+    <a class="nav-cta" href="team-post.html">发起组队</a>
+  </nav>
+</header>
+
+<div class="wrap" id="detailRoot"></div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">"创智算"数字科技协会</div>
+    <div class="foot-bottom">
+      <span>© 2026 CHUANGZHISUAN DIGITAL TECH ASSOCIATION</span>
+      <span>BUILD · V1.1 · DATA-DRIVEN</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/auth-ui.js?v=2"></script>
+<script src="js/pay-gate.js"></script>
+<script src="js/competitions-data.js"></script>
+<script>
+(function(){
+  const root = document.getElementById('detailRoot');
+  const params = new URLSearchParams(location.search);
+  const compId = params.get('id');
+  const staticComp = COMPETITIONS.find(c => c.id === compId);
+
+  function build(comp){
+  document.title = comp.name + ' · 创智算';
+
+  function el(tag, cls, text){
+    const e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+
+  /* ---- 动态时间计算：与当前日期实时对照 ---- */
+  function parseISO(s){
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    if(!m) return null;
+    return new Date(+m[1], +m[2] - 1, +m[3]);
+  }
+  function todayStart(){
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    return t;
+  }
+  // 时间节点状态：done 已完成 / ongoing 进行中 / upcoming 未开始
+  function nodeStatus(t){
+    const s = parseISO(t.start);
+    if(!s) return 'upcoming';
+    const e = (t.end && parseISO(t.end)) || s;
+    const now = todayStart();
+    if(now > e) return 'done';
+    if(now >= s && now <= e) return 'ongoing';
+    return 'upcoming';
+  }
+  // 报名状态：open 报名中 / closed 已截止 / null 无法判定
+  function regStatus(deadline){
+    const d = parseISO(deadline);
+    if(!d) return null;
+    return todayStart() > d ? 'closed' : 'open';
+  }
+
+  /* ---------- breadcrumb ---------- */
+  const crumb = el('div', 'breadcrumb');
+  const homeA = el('a', '', '首页'); homeA.href = 'index.html';
+  const compA = el('a', '', '竞赛中心'); compA.href = 'index.html#competitions';
+  crumb.append(homeA, el('span','sep','/'), compA, el('span','sep','/'), el('span','current', comp.name));
+
+  /* ---------- head ---------- */
+  const head = el('div', 'detail-head');
+  const badge = el('span', 'level-badge ' + comp.levelBadgeClass, comp.levelBadge);
+  const title = el('h1', 'detail-title', comp.name);
+  const sub = el('p', 'detail-sub', comp.intro);
+
+  const sync = el('div', 'sync-pill');
+  sync.append(el('span','dot'), el('span','', comp.website && comp.website.url
+    ? ('与官网同步 · 最近核对 ' + comp.verifyDate)
+    : ('信息发布于 ' + comp.verifyDate + ' · 校内/协会来源')));
+
+  const infoRow = el('div', 'info-row');
+  function infoItem(label, val){
+    const d = el('div');
+    d.append(el('div','info-label', label), el('div','info-val', val));
+    return d;
+  }
+  const catalogLevel = comp.catalog.inCatalog ? (comp.catalog.level || comp.levelBadge) : comp.levelBadge;
+  const regSt = regStatus(comp.deadline);
+  const deadlineLabel = comp.deadline + (regSt === 'open' ? ' · 报名中' : regSt === 'closed' ? ' · 已截止' : '');
+  infoRow.append(
+    infoItem('竞赛级别', catalogLevel),
+    infoItem('方向', comp.techLabels.join(' / ') || '不限技术方向'),
+    infoItem('组队人数', comp.teamSize),
+    infoItem('报名截止', deadlineLabel),
+    infoItem('竞赛周期', comp.period),
+  );
+
+  const cta = el('div', 'head-cta');
+  if(comp.website && comp.website.url){
+    const siteBtn = el('a', 'btn-primary', '访问竞赛官网 ↗');
+    siteBtn.href = comp.website.url;
+    siteBtn.target = '_blank';
+    siteBtn.rel = 'noopener';
+    cta.append(siteBtn);
+  }
+  const teamBtn = el('a', 'btn-ghost', '为这个竞赛发起组队 →');
+  teamBtn.href = 'team-post.html';
+  cta.append(teamBtn);
+
+  head.append(badge, title, sub, sync, infoRow, cta);
+
+  /* ---------- body left ---------- */
+  const bodyLeft = el('div');
+  const blockIntro = el('div', 'block');
+  blockIntro.append(el('h3','','赛事简介'), el('p','',comp.intro));
+  if(comp.introMore) blockIntro.append(el('p','',comp.introMore));
+
+  const blockTime = el('div', 'block');
+  blockTime.append(el('h3','','关键时间节点'));
+  const legend = el('div', 't-legend');
+  const lg1 = el('span',''); lg1.append(el('i','dot d-done'), el('b','','已完成'));
+  const lg2 = el('span',''); lg2.append(el('i','dot d-ongoing'), el('b','','进行中'));
+  const lg3 = el('span',''); lg3.append(el('i','dot d-upcoming'), el('b','','未开始'));
+  legend.append(lg1, lg2, lg3);
+  blockTime.append(legend);
+  const tl = el('div', 'timeline');
+  comp.timeline.forEach(t=>{
+    const status = nodeStatus(t);
+    const item = el('div', 't-item ' + status);
+    const dateWrap = el('div','t-date', t.date);
+    if(status === 'ongoing'){
+      dateWrap.append(el('span','t-ongoing-tag','进行中'));
+    }
+    item.append(dateWrap, el('div','t-title', t.title));
+    tl.append(item);
+  });
+  blockTime.append(tl);
+
+  const blockReq = el('div', 'block');
+  blockReq.append(el('h3','','参赛要求'));
+  const ul = el('ul', 'req-list');
+  comp.requirements.forEach(r=>ul.append(el('li','', r)));
+  blockReq.append(ul);
+
+  const blockSync = el('div', 'block');
+  blockSync.append(el('h3','','信息同步说明'));
+  blockSync.append(el('p','', '本页竞赛信息以官方发布为准，协会定期核对官网通知并更新。若发现页面信息与官网不一致，请以官网最新通知为准，并欢迎通过协会反馈渠道提醒我们修正。'));
+  if(comp.website && comp.website.url){
+    blockSync.append(el('p','', '官方渠道：' + comp.website.label + '（' + comp.website.url + '）'));
+  }
+
+  bodyLeft.append(blockIntro, blockTime, blockReq, blockSync);
+
+  /* ---------- body right ---------- */
+  const bodyRight = el('div');
+
+  // 信息卡
+  const infoCard = el('div', 'side-card');
+  infoCard.append(el('h4','','信息卡'));
+  function row(k, v){ const r = el('div','side-row'); r.append(el('span','',k), el('span','',v)); return r; }
+  infoCard.append(
+    row('主办单位', comp.catalog.inCatalog ? comp.catalog.organizer : '校内 / 协会'),
+    row('竞赛级别', catalogLevel),
+    row('信息来源', comp.website && comp.website.url ? '竞赛官网 + 学校立项名单' : '校内 / 协会发布'),
+    row('最近核对', comp.verifyDate),
+  );
+
+  // 官网链接卡
+  const siteCard = el('div', 'side-card site-card');
+  siteCard.append(el('h4','','竞赛官网'));
+  if(comp.website && comp.website.url){
+    const sName = el('div', 'site-name', comp.website.label);
+    const sUrl = el('a', 'site-url', comp.website.url);
+    sUrl.href = comp.website.url;
+    sUrl.target = '_blank';
+    sUrl.rel = 'noopener';
+    const sNote = el('div', 'site-note', '报名、赛题、日程等均以官网最新通知为准；本站信息最近核对于 ' + comp.verifyDate + '。');
+    siteCard.append(sName, sUrl, sNote);
+  } else {
+    siteCard.append(el('div', 'no-site', '暂无官方网站。' + (comp.level === 'club' ? '协会内部活动请关注协会群内通知。' : '赛事通知由主办方通过校内渠道发布，请关注学院与协会通知。')));
+  }
+
+  // 立项报销卡
+  const fundCard = el('div', 'side-card fund-card');
+  fundCard.append(el('h4','','学校立项报销'));
+  if(comp.funding.inList){
+    const amt = el('div', 'fund-amount');
+    amt.append(el('span','num', '¥' + comp.funding.amount.toFixed(1) + '万'), el('span','unit','立项金额'), el('span','badge','名单 No.' + comp.funding.no));
+    const fl = el('div', 'fund-list');
+    fl.append(
+      row('竞赛等级', comp.funding.level || '—'),
+      row('参赛阶段', comp.funding.stages),
+      row('竞赛学科', comp.funding.subject),
+      row('项目负责人', comp.funding.leader),
+      row('责任学院', comp.funding.college),
+    );
+    const src = el('div', 'fund-src', '数据来源：《南京林业大学2026年学科竞赛项目立项名单》（名单.pdf）。金额单位为万元，为学校对该项目参赛与组织的报销支持。');
+    if(comp.funding.note){
+      const note = el('div', 'fund-src', '说明：' + comp.funding.note);
+      fundCard.append(amt, fl, src, note);
+    } else {
+      fundCard.append(amt, fl, src);
+    }
+  } else {
+    fundCard.append(el('div', 'fund-none', comp.funding.note || '未列入学校立项报销名单。'));
+  }
+
+  // 关联方向
+  const tagCard = el('div', 'side-card');
+  tagCard.append(el('h4','','关联方向'));
+  const tagList = el('div', 'tag-list');
+  (comp.techLabels.length ? comp.techLabels : ['创新创业']).forEach(t=>tagList.append(el('span','',t)));
+  if(comp.catalog.inCatalog && comp.catalog.level){
+    tagList.append(el('span','', '目录 ' + comp.catalog.level));
+  }
+  tagCard.append(tagList);
+
+  // 相关组队公告（真实数据）
+  const teamCard = el('div', 'side-card');
+  teamCard.append(el('h4','','相关组队公告'));
+  const teamList = el('div');
+  teamCard.append(teamList);
+  fetch('/api/teams?competition=' + encodeURIComponent(comp.id), { credentials:'same-origin' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      const teams = (d && d.teams) || [];
+      if(teams.length){
+        teams.forEach(function(t){
+          const a = el('a', 'rel-team');
+          a.href = 'team-detail.html?id=' + t.id;
+          const total = (Number(t.have_count) || 0) + (Number(t.need_count) || 0);
+          const full = t.status === 'full' || (total > 0 && (Number(t.have_count) || 0) >= total);
+          const st = el('div', 'rel-status' + (full ? ' closed' : ''));
+          st.append(el('span','dot'), el('span','', full ? '已满员' : '招募中'));
+          a.append(st, el('div','rel-title', t.title), el('div','rel-meta', (t.have_count||0) + '/' + total + ' 人'));
+          teamList.append(a);
+        });
+      } else {
+        teamList.append(el('div','rel-empty', '暂无组队公告，去「组队大厅」发布一支队伍吧。'));
+      }
+    })
+    .catch(function(){});
+
+  bodyRight.append(infoCard, siteCard, fundCard, tagCard, teamCard);
+
+  /* ---------- assemble ---------- */
+  const body = el('div', 'detail-body');
+  body.append(bodyLeft, bodyRight);
+  root.append(crumb, head, body);
+  }
+
+  // 解析竞赛：静态数据库 或 协会内部竞赛（管理员发布）
+  function internalToComp(ic){
+    const lvl = ic.level === 'school' ? 'school' : 'club';
+    return {
+      id: '!internal-' + ic.id,
+      name: ic.name,
+      nameShort: ic.name,
+      level: lvl,
+      levelBadge: lvl === 'school' ? '校级' : '社团内部',
+      levelBadgeClass: lvl === 'school' ? 'level-c' : 'level-d',
+      tech: ic.tech ? [ic.tech] : [],
+      techLabels: (ic.skills ? String(ic.skills).split(',') : ['协会内部']).filter(Boolean),
+      catalog: { inCatalog: false, note: (lvl === 'school' ? '校级竞赛通知' : '协会内部通知') + '（管理员发布）' },
+      funding: { inList: false, note: lvl === 'school' ? '校级活动，不涉及学校立项报销' : '协会内部活动，费用由协会经费支持，不涉及学校立项报销' },
+      website: { url: '', label: '' },
+      verifyDate: '管理后台发布',
+      deadline: ic.deadline || '待定',
+      teamSize: ic.date ? ic.date : '—',
+      period: ic.location ? ic.location : '—',
+      intro: ic.description || '（管理员暂未填写赛事说明）',
+      introMore: '',
+      timeline: [],
+      requirements: [],
+      relatedTeams: [],
+    };
+  }
+
+  if(compId && compId.indexOf('!internal-') === 0){
+    fetch('/api/competitions/internal', { credentials:'same-origin' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        const ic = ((d && d.competitions) || []).find(function(x){ return '!internal-' + x.id === compId; });
+        if(ic) build(internalToComp(ic));
+        else root.innerHTML = '<div style="text-align:center; padding:90px 20px;"><b style="font-size:18px;">赛事不存在</b><p style="color:#999; margin-top:8px;"><a href="index.html#competitions" style="color:var(--forest);">返回竞赛中心</a></p></div>';
+      })
+      .catch(function(){
+        root.innerHTML = '<div style="text-align:center; padding:90px 20px;">加载失败，请刷新页面</div>';
+      });
+  } else {
+    build(staticComp || COMPETITIONS[0]);
+  }
+})();
+</script>
+
+</body>
+</html>

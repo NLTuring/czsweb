@@ -164,6 +164,20 @@
   .ach-item .nm{font-size:12.5px; font-weight:700; color:#F2F1E7; line-height:1.5; margin-top:7px;}
   .ach-item .mt{font-size:10.5px; color:rgba(242,241,231,0.5); margin-top:5px; line-height:1.5;}
 
+  /* ---------- 成就轮播 ---------- */
+  .ach-carousel{position:relative;}
+  .ach-viewport{overflow:hidden; border-radius:12px;}
+  .ach-track{display:flex; transition:transform .45s cubic-bezier(.25,.8,.35,1);}
+  .ach-page{min-width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:2px;}
+  @media(max-width:640px){.ach-page{grid-template-columns:1fr;}}
+  .ach-nav{position:absolute; top:50%; transform:translateY(-50%); width:34px; height:34px; border-radius:50%; border:1px solid rgba(242,241,231,0.25); background:rgba(20,30,22,0.75); color:#F2F1E7; font-size:20px; line-height:1; cursor:pointer; z-index:2; transition:background .15s, border-color .15s;}
+  .ach-nav:hover{background:rgba(110,231,168,0.2); border-color:rgba(110,231,168,0.5);}
+  .ach-prev{left:-8px;}
+  .ach-next{right:-8px;}
+  .ach-dots{display:flex; justify-content:center; gap:8px; margin-top:14px;}
+  .ach-dot{width:8px; height:8px; border-radius:50%; background:rgba(242,241,231,0.25); cursor:pointer; transition:background .2s, transform .2s; border:none; padding:0;}
+  .ach-dot.on{background:var(--signal); transform:scale(1.25);}
+
   /* ---------- fields (PCB silkscreen labels) ---------- */
   .field-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
   @media(max-width:860px){.field-grid{grid-template-columns:repeat(2,1fr);}}
@@ -432,57 +446,15 @@
           <span class="en">ACHIEVEMENTS</span>
         </div>
         <p class="ach-sub">历年均由社团成员共同参与获得（不完全统计，部分摘自协会招新海报与历年获奖证书）。</p>
-        <div class="ach-grid">
-          <div class="ach-item">
-            <span class="ach-lv g">国家级</span>
-            <div class="nm">全国大学生电子设计竞赛（电赛）· 国家一等奖</div>
-            <div class="mt">历届协会核心成员</div>
+        <div class="ach-carousel" id="achCarousel">
+          <div class="ach-viewport">
+            <div class="ach-track" id="achTrack">
+              <!-- 轮播页由 JS 渲染：js/nailong-assistant.js 无关，见下方内联脚本 -->
+            </div>
           </div>
-          <div class="ach-item">
-            <span class="ach-lv g">国家级</span>
-            <div class="nm">"创祎杯"全国大学生创新创业大赛 · 国家级银奖</div>
-            <div class="mt">2024 · 协会历届核心成员（基于新一代4G物联网边缘计算网关的基站通信电源监测系统）</div>
-          </div>
-          <div class="ach-item">
-            <span class="ach-lv c">省级</span>
-            <div class="nm">蓝桥杯（第十七届）软件赛 C/C++ 程序设计大学B组 · 江苏赛区二等奖</div>
-            <div class="mt">2026 · 协会历届核心成员</div>
-          </div>
-          <div class="ach-item">
-            <span class="ach-lv c">省级</span>
-            <div class="nm">中国机器人及人工智能大赛（第二十八届）· 江苏赛区 机器人任务挑战赛（智慧药房）二等奖</div>
-            <div class="mt">2026 · 协会历届核心成员</div>
-          </div>
-          <div class="ach-item">
-            <span class="ach-lv c">省级</span>
-            <div class="nm">iCAN 大学生创新创业大赛 · 江浙赛区二等奖</div>
-            <div class="mt">2024 · 协会历届核心成员（基于新一代4G物联网网关的基站电力监测系统）</div>
-          </div>
-          <div class="ach-item">
-            <span class="ach-lv c">省级</span>
-            <div class="nm">中国大学生工程实践与创新能力大赛（工创赛）· 省级一等奖</div>
-            <div class="mt">历年 · 协会核心成员</div>
-          </div>
-          <div class="ach-item">
-            <span class="ach-lv s">区域</span>
-            <div class="nm">华为开发者大赛 · 区域一等奖</div>
-            <div class="mt">历年 · 协会核心成员</div>
-          </div>
-          <div class="ach-item">
-            <span class="ach-lv s">区域</span>
-            <div class="nm">全国大学生创新发明大赛（区域赛）· 优胜奖</div>
-            <div class="mt">2024 · 协会历届核心成员（数字金融）</div>
-          </div>
-          <div class="ach-item">
-            <span class="ach-lv p">科研</span>
-            <div class="nm">计算机软件著作权《面向基站电力监测的智能触控网关人机交互系统 V1.0》</div>
-            <div class="mt">2024 · 协会历届核心成员（软著登字第13951763号）</div>
-          </div>
-          <div class="ach-item">
-            <span class="ach-lv p">学术</span>
-            <div class="nm">DSInS 2024 国际会议（数字社会与智能系统）· 参会</div>
-            <div class="mt">2024 · 协会历届核心成员（郑州）</div>
-          </div>
+          <button class="ach-nav ach-prev" id="achPrev" aria-label="上一页">‹</button>
+          <button class="ach-nav ach-next" id="achNext" aria-label="下一页">›</button>
+          <div class="ach-dots" id="achDots"></div>
         </div>
       </div>
     </div>
@@ -611,7 +583,7 @@
   </div>
 </footer>
 
-<script src="js/auth-ui.js"></script>
+<script src="js/auth-ui.js?v=2"></script>
 <script src="js/pay-gate.js"></script>
 <script src="js/competitions-data.js"></script>
 <script>
@@ -622,6 +594,75 @@
     if(!menuBtn || !navLinks) return;
     menuBtn.addEventListener('click', ()=> navLinks.classList.toggle('open'));
     navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=> navLinks.classList.remove('open')));
+  })();
+
+  // 协会历年成就轮播（3 页数据 + 左右切换 + 圆点 + 自动播放）
+  (function(){
+    const track = document.getElementById('achTrack');
+    const dotsEl = document.getElementById('achDots');
+    const prevBtn = document.getElementById('achPrev');
+    const nextBtn = document.getElementById('achNext');
+    if(!track) return;
+
+    // 成就数据（补充分页：竞赛 / 科研软著 / 学术会议）
+    const ACH_DATA = [
+      { lv: '国家级', lvClass: 'g', nm: '全国大学生电子设计竞赛（电赛）· 国家一等奖', mt: '历届协会核心成员' },
+      { lv: '国家级', lvClass: 'g', nm: '"创祎杯"全国大学生创新创业大赛 · 国家级银奖', mt: '2024 · 协会历届核心成员（基于新一代4G物联网边缘计算网关的基站通信电源监测系统）' },
+      { lv: '省级', lvClass: 'c', nm: '中国大学生工程实践与创新能力大赛（工创赛）· 省级一等奖', mt: '历年 · 协会核心成员' },
+      { lv: '区域', lvClass: 's', nm: '华为开发者大赛 · 区域一等奖', mt: '历年 · 协会核心成员' },
+      { lv: '省级', lvClass: 'c', nm: '蓝桥杯（第十七届）软件赛 C/C++ 程序设计大学B组 · 江苏赛区二等奖', mt: '2026 · 协会历届核心成员' },
+      { lv: '省级', lvClass: 'c', nm: '中国机器人及人工智能大赛（第二十八届）· 江苏赛区 机器人任务挑战赛（智慧药房）二等奖', mt: '2026 · 协会历届核心成员' },
+      { lv: '省级', lvClass: 'c', nm: 'iCAN 大学生创新创业大赛 · 江浙赛区二等奖', mt: '2024 · 协会历届核心成员（基于新一代4G物联网网关的基站电力监测系统）' },
+      { lv: '区域', lvClass: 's', nm: '全国大学生创新发明大赛（区域赛）· 优胜奖', mt: '2024 · 协会历届核心成员（数字金融）' },
+      { lv: '科研', lvClass: 'p', nm: '计算机软件著作权《面向基站电力监测的智能触控网关人机交互系统 V1.0》', mt: '2024 · 协会历届核心成员（软著登字第13951763号）' },
+      { lv: '学术', lvClass: 'p', nm: 'DSInS 2024 国际会议（数字社会与智能系统）· 参会', mt: '2024 · 协会历届核心成员（郑州）' },
+    ];
+
+    // 按每页 4 条分页（最后一页可能不满）
+    const PER_PAGE = 4;
+    const pages = [];
+    for(let i=0; i<ACH_DATA.length; i+=PER_PAGE){
+      pages.push(ACH_DATA.slice(i, i+PER_PAGE));
+    }
+
+    // 渲染轮播页
+    track.innerHTML = pages.map(page => (
+      '<div class="ach-page">' + page.map(a => (
+        '<div class="ach-item">' +
+          '<span class="ach-lv ' + a.lvClass + '">' + a.lv + '</span>' +
+          '<div class="nm">' + a.nm + '</div>' +
+          '<div class="mt">' + a.mt + '</div>' +
+        '</div>'
+      )).join('') + '</div>'
+    )).join('');
+
+    // 渲染圆点
+    dotsEl.innerHTML = pages.map((_, i) =>
+      '<button class="ach-dot' + (i===0 ? ' on' : '') + '" data-i="' + i + '" aria-label="第' + (i+1) + '页"></button>'
+    ).join('');
+
+    let cur = 0;
+    function go(i){
+      cur = (i + pages.length) % pages.length;
+      track.style.transform = 'translateX(-' + (cur*100) + '%)';
+      dotsEl.querySelectorAll('.ach-dot').forEach((d, idx)=>{
+        d.classList.toggle('on', idx===cur);
+      });
+    }
+    prevBtn.addEventListener('click', ()=> go(cur-1));
+    nextBtn.addEventListener('click', ()=> go(cur+1));
+    dotsEl.addEventListener('click', (e)=>{
+      const d = e.target.closest('.ach-dot');
+      if(d) go(Number(d.getAttribute('data-i')));
+    });
+    // 自动轮播（6 秒）
+    let auto = setInterval(()=> go(cur+1), 6000);
+    const carousel = document.getElementById('achCarousel');
+    carousel.addEventListener('mouseenter', ()=> clearInterval(auto));
+    carousel.addEventListener('mouseleave', ()=> { auto = setInterval(()=> go(cur+1), 6000); });
+
+    // 初始化显示第 1 页
+    go(0);
   })();
 
   // 竞赛中心：从竞赛数据库 + 协会内部竞赛（管理员发布）渲染卡片 + 双大类筛选
@@ -753,13 +794,28 @@
         const full = t.status === 'closed' || (total > 0 && Number(t.have_count) >= total);
         const tags = (t.skills ? String(t.skills).split(',').slice(0,3) : []);
         if(t.grade) tags.push(t.grade);
-        return '<a class="team-card" href="team-detail.html?id=' + t.id + '">' +
+        return '<div class="team-card" data-team="' + t.id + '" style="cursor:pointer;">' +
           '<div class="team-status"><span class="dot ' + (full ? 'full' : 'open') + '"></span>' + (full ? '已满员' : '招募中') + '</div>' +
           '<div class="team-title">' + esc(t.title) + (full ? '' : ' · 缺 ' + (t.need_count || 1) + ' 人') + '</div>' +
           '<div class="team-tags">' + tags.slice(0,4).map(s=>'<span class="team-tag">'+esc(s)+'</span>').join('') + '</div>' +
-          '<div class="team-foot"><div class="avatars"><div class="avatar">' + esc((t.creator_name || t.creator_username || '友').slice(0,1)) + '</div></div><span>' + (t.have_count||0) + '/' + (total||0) + ' 人</span></div>' +
-          '</a>';
+          '<div class="team-foot">' +
+            '<div class="avatars">' +
+              (t.creator_avatar
+                ? '<a class="author-link" data-author="' + esc(t.creator_username || '') + '" href="profile.html?username=' + encodeURIComponent(t.creator_username || '') + '" title="进入' + esc(t.creator_name || t.creator_username || '') + '的主页"><img src="' + esc(t.creator_avatar) + '" style="width:26px;height:26px;border-radius:50%;object-fit:cover;display:block;"></a>'
+                : '<a class="avatar author-link" data-author="' + esc(t.creator_username || '') + '" href="profile.html?username=' + encodeURIComponent(t.creator_username || '') + '" title="进入' + esc(t.creator_name || t.creator_username || '') + '的主页">' + esc((t.creator_name || t.creator_username || '友').slice(0,1)) + '</a>') +
+              (t.creator_name ? '<span class="author-name" style="font-size:12px; color:rgba(27,36,28,0.7); align-self:center;"><a data-author="' + esc(t.creator_username || '') + '" href="profile.html?username=' + encodeURIComponent(t.creator_username || '') + '" style="color:inherit;">' + esc(t.creator_name) + '</a></span>' : '') +
+            '</div>' +
+            '<span>' + (t.have_count||0) + '/' + (total||0) + ' 人</span>' +
+          '</div>' +
+          '</div>';
       }).join('');
+      // 点击卡片（非作者链接）跳转详情
+      grid.querySelectorAll('.team-card').forEach(function(card){
+        card.addEventListener('click', function(e){
+          if(e.target.closest('a.author-link')) return; // 作者链接不跳转
+          location.href = 'team-detail.html?id=' + card.getAttribute('data-team');
+        });
+      });
     }
     fetch('/api/teams', { credentials:'same-origin' })
       .then(function(r){ return r.json(); })
